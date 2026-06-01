@@ -1,0 +1,94 @@
+@import "tailwindcss";
+
+@variant dark (&:where(.dark, .dark *));
+
+* { box-sizing: border-box; }
+
+/* ── LIGHT MODE ─────────────────────────────── */
+:root {
+  --bg-base:        #f1f3f8;
+  --bg-surface:     #ffffff;
+  --bg-raised:      #f4f6fc;
+  --bg-hover:       #eaecf5;
+  --border:         #e2e6f0;
+  --border-strong:  #c8cfe0;
+  --text-primary:   #080d1a;
+  --text-secondary: #3a4560;
+  --text-muted:     #7080a0;
+  --text-faint:     #adb8cc;
+  --shadow-sm:      0 1px 4px rgba(10,15,40,0.06);
+  --shadow-md:      0 4px 20px rgba(10,15,40,0.09);
+  --shadow-lg:      0 12px 48px rgba(10,15,40,0.13);
+  --scrollbar:      #d0d6e8;
+}
+
+/* ── DARK MODE — DEEP BLACK ─────────────────── */
+.dark {
+  --bg-base:        #060608;
+  --bg-surface:     #0f0f12;
+  --bg-raised:      #18181e;
+  --bg-hover:       #202028;
+  --border:         #26262e;
+  --border-strong:  #36363f;
+  --text-primary:   #eef0f8;
+  --text-secondary: #8892aa;
+  --text-muted:     #505870;
+  --text-faint:     #2e3248;
+  --shadow-sm:      0 1px 4px rgba(0,0,0,0.5);
+  --shadow-md:      0 4px 20px rgba(0,0,0,0.6);
+  --shadow-lg:      0 12px 48px rgba(0,0,0,0.7);
+  --scrollbar:      #2a2a35;
+}
+
+/* ── TYPOGRAPHY ─────────────────────────────── */
+
+body {
+  background: var(--bg-base);
+  color: var(--text-primary);
+  font-family: 'Outfit', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  transition: background 0.25s ease, color 0.25s ease;
+}
+
+/* Monospace for roll numbers etc */
+.font-mono { font-family: 'JetBrains Mono', monospace !important; }
+
+/* ── MESH BACKGROUND ─────────────────────────── */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse 90% 55% at 15% -5%, rgba(99,102,241,0.07) 0%, transparent 55%),
+    radial-gradient(ellipse 60% 45% at 85% 5%, rgba(139,92,246,0.05) 0%, transparent 50%),
+    radial-gradient(ellipse 75% 35% at 50% 105%, rgba(59,130,246,0.04) 0%, transparent 55%);
+}
+
+.dark body::before {
+  background:
+    radial-gradient(ellipse 90% 55% at 15% -5%, rgba(99,102,241,0.04) 0%, transparent 55%),
+    radial-gradient(ellipse 60% 45% at 85% 5%, rgba(139,92,246,0.03) 0%, transparent 50%);
+}
+
+/* ── GLASS UTILITIES ─────────────────────────── */
+.glass {
+  background: rgba(255,255,255,0.65);
+  backdrop-filter: blur(24px) saturate(180%);
+  -webkit-backdrop-filter: blur(24px) saturate(180%);
+  border: 1px solid rgba(255,255,255,0.75);
+}
+.dark .glass {
+  background: rgba(15,15,18,0.85);
+  backdrop-filter: blur(24px) saturate(120%);
+  -webkit-backdrop-filter: blur(24px) saturate(120%);
+  border: 1px solid rgba(255,255,255,0.06);
+}
+
+/* ── MISC ────────────────────────────────────── */
+::selection { background: rgba(99,102,241,0.22); color: var(--text-primary); }
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--scrollbar); border-radius: 99px; }
