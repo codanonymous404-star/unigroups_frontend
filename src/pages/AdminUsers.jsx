@@ -11,25 +11,23 @@ import Badge            from '../components/ui/Badge.jsx'
 import { Avatar, Skeleton, EmptyState } from '../components/ui/misc.jsx'
 import DeptSelector     from '../components/forms/DeptSelector.jsx'
 import { extractError } from '../hooks/useApi.js'
-import { staggerContainer, fadeUp, scaleIn, springSmooth, springSnappy, springBouncy } from '../utils/animations.js'
+import { staggerContainer, fadeUp, scaleIn, spring, springSmooth, springSnappy } from '../utils/animations.js'
 import api from '../api/axios.js'
 
-// ── API helpers ───────────────────────────────────────────────────────────────
+// ── Admin API ────────────────────────────────────────────────────────────────
 const adminAPI = {
-  createSingle: (d)  => api.post('/api/auth/admin/users/create/', d),
-  createBulk:   (d)  => api.post('/api/auth/admin/users/bulk-create/', d),
-  createBulkCSV:(fd) => api.post('/api/auth/admin/users/bulk-create/', fd, {
-    headers: { 'Content-Type': 'multipart/form-data' }
-  }),
+  createSingle:  (d)  => api.post('/api/auth/admin/users/create/', d),
+  createBulkCSV: (fd) => api.post('/api/auth/admin/users/bulk-create/', fd, { headers: { 'Content-Type': 'multipart/form-data' } }),
+  createBulkJSON:(d)  => api.post('/api/auth/admin/users/bulk-create/', d),
+  deleteAll:     ()   => api.delete('/api/auth/admin/users/delete-all/'),
 }
 
 const CSV_TEMPLATE = `roll_number,name,email,department,role\nSU72-BSSEM-F25-001,Ahmed Ali,ahmed@su.edu.pk,SE,student\nSU72-BSCS-F25-002,Sara Khan,sara@su.edu.pk,CS,student`
-
 const blankRow = () => ({ roll_number: '', name: '', email: '', department: 'SE', role: 'student' })
 
-// ── Single Create Modal ───────────────────────────────────────────────────────
+// ── Add Single User Modal ────────────────────────────────────────────────────
 function AddModal({ onClose, onDone }) {
-  const [f, setF]       = useState({ roll_number: '', name: '', email: '', department: 'SE', role: 'student', password: '' })
+  const [f, setF]     = useState({ roll_number: '', name: '', email: '', department: 'SE', role: 'student', password: '' })
   const [loading, setL] = useState(false)
   const [error, setErr] = useState('')
   const [result, setRes] = useState(null)
@@ -43,98 +41,85 @@ function AddModal({ onClose, onDone }) {
       const r = await adminAPI.createSingle(body)
       setRes(r.data)
       onDone()
-    } catch (err) {
-      setErr(extractError(err))
-    } finally { setL(false) }
+    } catch (err) { setErr(extractError(err)) }
+    finally { setL(false) }
   }
 
   return (
     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
       className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4"
       style={{ background: 'rgba(0,0,0,0.7)', backdropFilter: 'blur(6px)' }}>
-      <motion.div initial={{ y: 60, opacity: 0 }} animate={{ y: 0, opacity: 1 }} exit={{ y: 60, opacity: 0 }} transition={springSmooth}
+      <motion.div initial={{ y: 60, opacity: 0 }} animate={{ y: 0, opacity: 1 }} exit={{ y: 60, opacity: 0 }} transition={spring}
         className="w-full sm:max-w-md rounded-t-3xl sm:rounded-2xl shadow-2xl max-h-[92vh] overflow-y-auto"
         style={{ background: 'var(--bg-surface)', border: '1px solid var(--border)' }}>
-
-        {/* Header */}
         <div className="flex items-center justify-between px-5 py-4" style={{ borderBottom: '1px solid var(--border)' }}>
           <div>
             <h2 className="font-bold text-base text-[var(--text-primary)]">Add New User</h2>
-            <p className="text-xs text-[var(--text-muted)] mt-0.5">Auto-verified · No email required</p>
+            <p className="text-xs text-[var(--text-muted)] mt-0.5">Auto-verified · No email needed</p>
           </div>
           <motion.button whileTap={{ scale: 0.88 }} onClick={onClose}
             className="p-2 rounded-xl text-[var(--text-secondary)] hover:bg-[var(--bg-raised)]">
             <Icon name="x" size={18} />
           </motion.button>
         </div>
-
         <div className="p-5 space-y-4">
           <Alert type="error" message={error} onClose={() => setErr('')} />
-
-          {/* Success result */}
-          {result && (
-            <motion.div variants={scaleIn} initial="initial" animate="animate"
-              className="rounded-2xl p-4 space-y-2"
-              style={{ background: 'var(--bg-raised)', border: '1px solid var(--border)' }}>
-              <div className="flex items-center gap-2 text-green-500 dark:text-green-400 font-bold text-sm mb-2">
-                <Icon name="checkCircle" size={16} /> User created successfully!
+          {result ? (
+            <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}
+              className="rounded-2xl p-4 space-y-2" style={{ background: 'var(--bg-raised)', border: '1px solid var(--border)' }}>
+              <div className="flex items-center gap-2 text-green-500 font-bold text-sm mb-2">
+                <Icon name="checkCircle" size={16} /> User created!
               </div>
               <p className="text-xs text-[var(--text-muted)]">Roll: <span className="font-mono font-bold text-indigo-500">{result.user?.roll_number}</span></p>
               {result.auto_password && (
-                <p className="text-xs text-[var(--text-muted)]">Auto password: <code className="font-mono bg-indigo-500/10 text-indigo-500 px-2 py-0.5 rounded-lg">{result.auto_password}</code></p>
+                <p className="text-xs text-[var(--text-muted)]">Password: <code className="font-mono bg-indigo-500/10 text-indigo-500 px-2 py-0.5 rounded-lg">{result.auto_password}</code></p>
               )}
               <Button size="sm" variant="secondary" onClick={() => { setRes(null); setF({ roll_number: '', name: '', email: '', department: 'SE', role: 'student', password: '' }) }}>
                 Add Another
               </Button>
             </motion.div>
-          )}
-
-          {!result && <>
-            <Input label="Roll Number" placeholder="SU72-BSSEM-F25-017" hint="Format: SU##-DEPT-X##-###"
-              value={f.roll_number} onChange={e => setF(p => ({ ...p, roll_number: e.target.value.toUpperCase() }))} mono required />
-            <Input label="Full Name" placeholder="Ali Hassan" value={f.name} onChange={set('name')} required />
-            <Input label="Email" type="email" placeholder="ali@su.edu.pk" value={f.email} onChange={set('email')} required />
-            <DeptSelector value={f.department} onChange={v => setF(p => ({ ...p, department: v }))} />
-
-            {/* Role selector */}
-            <div>
-              <label className="block text-xs font-bold text-[var(--text-muted)] uppercase tracking-wider mb-2">Role</label>
-              <div className="grid grid-cols-2 gap-3">
-                {[
-                  { v: 'student', label: 'Student', icon: 'graduationCap', color: 'text-indigo-600 dark:text-indigo-400', active: 'border-indigo-400 bg-indigo-50 dark:bg-indigo-400/8' },
-                  { v: 'admin',   label: 'Admin',   icon: 'shieldCheck',   color: 'text-amber-600 dark:text-amber-400',   active: 'border-amber-400 bg-amber-50 dark:bg-amber-400/8' },
-                ].map(r => (
-                  <button key={r.v} type="button" onClick={() => setF(p => ({ ...p, role: r.v }))}
-                    className={`flex items-center gap-3 p-4 rounded-xl border-2 transition-all cursor-pointer
-                      ${f.role === r.v ? r.active : 'border-[var(--border)] hover:bg-[var(--bg-raised)] hover:border-[var(--border-strong)]'}`}>
-                    <div className={`w-9 h-9 rounded-xl flex items-center justify-center shrink-0 ${f.role === r.v ? r.active : 'bg-[var(--bg-raised)]'}`}>
-                      <Icon name={r.icon} size={16} className={f.role === r.v ? r.color : 'text-[var(--text-muted)]'} />
-                    </div>
-                    <span className={`text-sm font-semibold ${f.role === r.v ? r.color : 'text-[var(--text-secondary)]'}`}>{r.label}</span>
-                  </button>
-                ))}
+          ) : (
+            <>
+              <Input label="Roll Number" placeholder="SU72-BSSEM-F25-017" hint="Format: SU##-DEPT-X##-###"
+                value={f.roll_number} onChange={e => setF(p => ({ ...p, roll_number: e.target.value.toUpperCase() }))} mono required />
+              <Input label="Full Name" placeholder="Ali Hassan" value={f.name} onChange={set('name')} required />
+              <Input label="Email" type="email" placeholder="ali@su.edu.pk" value={f.email} onChange={set('email')} required />
+              <DeptSelector value={f.department} onChange={v => setF(p => ({ ...p, department: v }))} />
+              <div>
+                <label className="block text-xs font-bold text-[var(--text-muted)] uppercase tracking-wider mb-2">Role</label>
+                <div className="grid grid-cols-2 gap-3">
+                  {[
+                    { v: 'student', label: 'Student', icon: 'users' },
+                    { v: 'admin',   label: 'Admin',   icon: 'shieldCheck' },
+                  ].map(r => (
+                    <button key={r.v} type="button" onClick={() => setF(p => ({ ...p, role: r.v }))}
+                      className={`flex items-center gap-3 p-3 rounded-xl border-2 transition-all cursor-pointer text-left
+                        ${f.role === r.v
+                          ? 'border-indigo-400 bg-indigo-50 dark:bg-indigo-400/10 text-indigo-600 dark:text-indigo-400'
+                          : 'border-[var(--border)] hover:bg-[var(--bg-raised)] text-[var(--text-secondary)]'}`}>
+                      <Icon name={r.icon} size={15} />
+                      <span className="text-sm font-semibold">{r.label}</span>
+                    </button>
+                  ))}
+                </div>
               </div>
-            </div>
-
-            <Input label="Password" type="password" placeholder="Leave blank → auto (ROLL@123)"
-              hint="Optional" value={f.password} onChange={set('password')} />
-
-            <div className="flex gap-3 pt-1">
-              <Button loading={loading} fullWidth onClick={submit}>
-                <Icon name="userPlus" size={14} /> Create User
-              </Button>
-              <Button variant="secondary" onClick={onClose} className="shrink-0">Cancel</Button>
-            </div>
-          </>}
+              <Input label="Password (optional)" type="password" placeholder="Leave blank → auto ROLL@123"
+                hint="Optional" value={f.password} onChange={set('password')} />
+              <div className="flex gap-3 pt-1">
+                <Button loading={loading} fullWidth onClick={submit}><Icon name="userPlus" size={14} /> Create User</Button>
+                <Button variant="secondary" onClick={onClose} className="shrink-0">Cancel</Button>
+              </div>
+            </>
+          )}
         </div>
       </motion.div>
     </motion.div>
   )
 }
 
-// ── Bulk Create Modal ─────────────────────────────────────────────────────────
+// ── Bulk Create Modal ────────────────────────────────────────────────────────
 function BulkModal({ onClose, onDone }) {
-  const [mode, setMode]       = useState('manual') // 'manual' | 'csv'
+  const [mode, setMode]       = useState('manual')
   const [rows, setRows]       = useState([blankRow()])
   const [csvFile, setCsvFile] = useState(null)
   const [loading, setL]       = useState(false)
@@ -154,13 +139,11 @@ function BulkModal({ onClose, onDone }) {
         const fd = new FormData(); fd.append('file', csvFile)
         r = await adminAPI.createBulkCSV(fd)
       } else {
-        r = await adminAPI.createBulk({ users: rows })
+        r = await adminAPI.createBulkJSON({ users: rows })
       }
-      setRes(r.data)
-      onDone()
-    } catch (err) {
-      setErr(extractError(err))
-    } finally { setL(false) }
+      setRes(r.data); onDone()
+    } catch (err) { setErr(extractError(err)) }
+    finally { setL(false) }
   }
 
   const downloadTemplate = () => {
@@ -173,15 +156,13 @@ function BulkModal({ onClose, onDone }) {
     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
       className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4"
       style={{ background: 'rgba(0,0,0,0.7)', backdropFilter: 'blur(6px)' }}>
-      <motion.div initial={{ y: 60, opacity: 0 }} animate={{ y: 0, opacity: 1 }} exit={{ y: 60, opacity: 0 }} transition={springSmooth}
+      <motion.div initial={{ y: 60, opacity: 0 }} animate={{ y: 0, opacity: 1 }} exit={{ y: 60, opacity: 0 }} transition={spring}
         className="w-full sm:max-w-3xl rounded-t-3xl sm:rounded-2xl shadow-2xl max-h-[92vh] flex flex-col"
         style={{ background: 'var(--bg-surface)', border: '1px solid var(--border)' }}>
-
-        {/* Header */}
         <div className="flex items-center justify-between px-5 py-4 shrink-0" style={{ borderBottom: '1px solid var(--border)' }}>
           <div>
             <h2 className="font-bold text-base text-[var(--text-primary)]">Bulk Create Users</h2>
-            <p className="text-xs text-[var(--text-muted)] mt-0.5">Manual entry or CSV upload</p>
+            <p className="text-xs text-[var(--text-muted)] mt-0.5">Manual entry or CSV upload · Password auto = ROLL@123</p>
           </div>
           <motion.button whileTap={{ scale: 0.88 }} onClick={onClose}
             className="p-2 rounded-xl text-[var(--text-secondary)] hover:bg-[var(--bg-raised)]">
@@ -199,27 +180,22 @@ function BulkModal({ onClose, onDone }) {
                 className={`px-4 py-2 rounded-lg text-xs font-semibold transition-all
                   ${mode === k
                     ? 'bg-indigo-500/15 text-indigo-600 dark:text-indigo-400 border border-indigo-500/25'
-                    : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-hover)]'}`}>
+                    : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)]'}`}>
                 {l}
               </button>
             ))}
           </div>
 
-          {/* Manual table */}
+          {/* Manual rows */}
           {mode === 'manual' && !result && (
             <div className="space-y-3">
-              <p className="text-xs text-[var(--text-muted)]">Password auto-set as <code className="font-mono bg-indigo-500/10 text-indigo-500 px-1.5 rounded">ROLL@123</code> for all rows.</p>
               <div className="overflow-x-auto rounded-xl" style={{ border: '1px solid var(--border)' }}>
                 <table className="w-full text-xs">
                   <thead>
                     <tr style={{ background: 'var(--bg-raised)', borderBottom: '1px solid var(--border)' }}>
-                      <th className="px-3 py-2.5 text-left font-semibold text-[var(--text-muted)] uppercase tracking-wider">#</th>
-                      <th className="px-3 py-2.5 text-left font-semibold text-[var(--text-muted)] uppercase tracking-wider">Roll Number *</th>
-                      <th className="px-3 py-2.5 text-left font-semibold text-[var(--text-muted)] uppercase tracking-wider">Full Name *</th>
-                      <th className="px-3 py-2.5 text-left font-semibold text-[var(--text-muted)] uppercase tracking-wider">Email *</th>
-                      <th className="px-3 py-2.5 text-left font-semibold text-[var(--text-muted)] uppercase tracking-wider">Dept</th>
-                      <th className="px-3 py-2.5 text-left font-semibold text-[var(--text-muted)] uppercase tracking-wider">Role</th>
-                      <th className="px-2 py-2.5"></th>
+                      {['#', 'Roll Number *', 'Full Name *', 'Email *', 'Dept', 'Role', ''].map(h => (
+                        <th key={h} className="px-3 py-2.5 text-left font-semibold text-[var(--text-muted)] uppercase tracking-wider whitespace-nowrap">{h}</th>
+                      ))}
                     </tr>
                   </thead>
                   <tbody>
@@ -229,40 +205,36 @@ function BulkModal({ onClose, onDone }) {
                         <td className="px-2 py-1.5 min-w-[160px]">
                           <input value={row.roll_number} onChange={e => setCell(i, 'roll_number', e.target.value.toUpperCase())}
                             placeholder="SU72-BSSEM-F25-001"
-                            className="w-full px-2.5 py-1.5 rounded-lg text-xs font-mono text-indigo-600 dark:text-indigo-400 outline-none focus:ring-2 focus:ring-indigo-500/20"
+                            className="w-full px-2.5 py-1.5 rounded-lg text-xs font-mono text-indigo-600 dark:text-indigo-400 outline-none"
                             style={{ background: 'var(--bg-raised)', border: '1px solid var(--border)' }} />
                         </td>
                         <td className="px-2 py-1.5 min-w-[130px]">
-                          <input value={row.name} onChange={e => setCell(i, 'name', e.target.value)}
-                            placeholder="Full Name"
-                            className="w-full px-2.5 py-1.5 rounded-lg text-xs text-[var(--text-primary)] outline-none focus:ring-2 focus:ring-indigo-500/20"
+                          <input value={row.name} onChange={e => setCell(i, 'name', e.target.value)} placeholder="Full Name"
+                            className="w-full px-2.5 py-1.5 rounded-lg text-xs text-[var(--text-primary)] outline-none"
                             style={{ background: 'var(--bg-raised)', border: '1px solid var(--border)' }} />
                         </td>
                         <td className="px-2 py-1.5 min-w-[160px]">
-                          <input value={row.email} onChange={e => setCell(i, 'email', e.target.value)} type="email"
-                            placeholder="email@su.edu.pk"
-                            className="w-full px-2.5 py-1.5 rounded-lg text-xs text-[var(--text-primary)] outline-none focus:ring-2 focus:ring-indigo-500/20"
+                          <input value={row.email} onChange={e => setCell(i, 'email', e.target.value)} placeholder="email@su.edu.pk" type="email"
+                            className="w-full px-2.5 py-1.5 rounded-lg text-xs text-[var(--text-primary)] outline-none"
                             style={{ background: 'var(--bg-raised)', border: '1px solid var(--border)' }} />
                         </td>
                         <td className="px-2 py-1.5">
                           <select value={row.department} onChange={e => setCell(i, 'department', e.target.value)}
-                            className="px-2.5 py-1.5 rounded-lg text-xs text-[var(--text-primary)] outline-none focus:ring-2 focus:ring-indigo-500/20"
+                            className="px-2 py-1.5 rounded-lg text-xs text-[var(--text-primary)] outline-none"
                             style={{ background: 'var(--bg-raised)', border: '1px solid var(--border)' }}>
-                            <option value="SE">SE</option>
-                            <option value="CS">CS</option>
+                            <option value="SE">SE</option><option value="CS">CS</option>
                           </select>
                         </td>
                         <td className="px-2 py-1.5">
                           <select value={row.role} onChange={e => setCell(i, 'role', e.target.value)}
-                            className="px-2.5 py-1.5 rounded-lg text-xs text-[var(--text-primary)] outline-none focus:ring-2 focus:ring-indigo-500/20"
+                            className="px-2 py-1.5 rounded-lg text-xs text-[var(--text-primary)] outline-none"
                             style={{ background: 'var(--bg-raised)', border: '1px solid var(--border)' }}>
-                            <option value="student">Student</option>
-                            <option value="admin">Admin</option>
+                            <option value="student">Student</option><option value="admin">Admin</option>
                           </select>
                         </td>
                         <td className="px-2 py-1.5">
                           <motion.button whileTap={{ scale: 0.85 }} onClick={() => removeRow(i)} disabled={rows.length === 1}
-                            className="p-1.5 rounded-lg text-red-400 hover:bg-red-50 dark:hover:bg-red-500/10 disabled:opacity-30 disabled:cursor-not-allowed">
+                            className="p-1.5 rounded-lg text-red-400 hover:bg-red-500/10 disabled:opacity-30">
                             <Icon name="x" size={12} />
                           </motion.button>
                         </td>
@@ -271,28 +243,22 @@ function BulkModal({ onClose, onDone }) {
                   </tbody>
                 </table>
               </div>
-              <Button size="sm" variant="outline" onClick={addRow}>
-                <Icon name="plus" size={13} /> Add Row
-              </Button>
+              <Button size="sm" variant="outline" onClick={addRow}><Icon name="plus" size={13} /> Add Row</Button>
             </div>
           )}
 
-          {/* CSV Upload */}
+          {/* CSV upload */}
           {mode === 'csv' && !result && (
             <div className="space-y-3">
-              <div className="flex items-center justify-between">
+              <div className="flex items-center justify-between flex-wrap gap-2">
                 <p className="text-xs text-[var(--text-muted)]">Columns: <code className="font-mono bg-indigo-500/10 text-indigo-500 px-1.5 rounded">roll_number, name, email, department, role</code></p>
-                <Button size="sm" variant="ghost" onClick={downloadTemplate}>
-                  <Icon name="arrowRight" size={12} /> Template
-                </Button>
+                <Button size="sm" variant="ghost" onClick={downloadTemplate}><Icon name="arrowRight" size={12} /> Download Template</Button>
               </div>
-              <motion.div
-                whileHover={{ scale: 1.01 }} transition={springSnappy}
-                onClick={() => fileRef.current.click()}
+              <div onClick={() => fileRef.current.click()}
                 onDragOver={e => e.preventDefault()}
                 onDrop={e => { e.preventDefault(); setCsvFile(e.dataTransfer.files[0]) }}
-                className={`rounded-2xl p-8 text-center cursor-pointer transition-all ${csvFile ? 'border-indigo-400' : 'border-[var(--border)]'}`}
-                style={{ border: '2px dashed', background: csvFile ? 'var(--bg-raised)' : 'transparent' }}>
+                className="rounded-2xl p-8 text-center cursor-pointer transition-all"
+                style={{ border: `2px dashed ${csvFile ? 'var(--color-primary, #6366f1)' : 'var(--border)'}`, background: csvFile ? 'var(--bg-raised)' : 'transparent' }}>
                 <input ref={fileRef} type="file" accept=".csv" style={{ display: 'none' }} onChange={e => setCsvFile(e.target.files[0])} />
                 {csvFile ? (
                   <>
@@ -308,70 +274,58 @@ function BulkModal({ onClose, onDone }) {
                       <Icon name="plus" size={22} className="text-[var(--text-muted)]" />
                     </div>
                     <p className="font-semibold text-sm text-[var(--text-primary)]">Click or drag CSV here</p>
-                    <p className="text-xs text-[var(--text-muted)] mt-1">Only .csv files</p>
+                    <p className="text-xs text-[var(--text-muted)] mt-1">Only .csv files accepted</p>
                   </>
                 )}
-              </motion.div>
+              </div>
             </div>
           )}
 
           {/* Results */}
           {result && (
-            <motion.div variants={staggerContainer} initial="initial" animate="animate" className="space-y-4">
-              {/* Stats */}
+            <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="space-y-4">
               <div className="grid grid-cols-3 gap-3">
                 {[
-                  { l: 'Total', c: result.total,         col: 'text-[var(--text-primary)]', bg: 'var(--bg-raised)' },
-                  { l: 'Created', c: result.created_count, col: 'text-green-500 dark:text-green-400', bg: 'var(--bg-raised)' },
-                  { l: 'Failed',  c: result.failed_count,  col: result.failed_count > 0 ? 'text-red-500 dark:text-red-400' : 'text-[var(--text-faint)]', bg: 'var(--bg-raised)' },
-                ].map(({ l, c, col, bg }) => (
-                  <motion.div key={l} variants={fadeUp} className="rounded-2xl p-4 text-center" style={{ background: bg, border: '1px solid var(--border)' }}>
+                  { l: 'Total',   c: result.total,          col: 'text-[var(--text-primary)]' },
+                  { l: 'Created', c: result.created_count,  col: 'text-green-500 dark:text-green-400' },
+                  { l: 'Failed',  c: result.failed_count,   col: result.failed_count > 0 ? 'text-red-500' : 'text-[var(--text-faint)]' },
+                ].map(({ l, c, col }) => (
+                  <div key={l} className="rounded-2xl p-4 text-center" style={{ background: 'var(--bg-raised)', border: '1px solid var(--border)' }}>
                     <p className={`text-2xl font-bold ${col}`}>{c}</p>
                     <p className="text-xs text-[var(--text-muted)] mt-0.5">{l}</p>
-                  </motion.div>
+                  </div>
                 ))}
               </div>
-
-              {/* Created list */}
               {result.created?.length > 0 && (
                 <div className="rounded-2xl overflow-hidden" style={{ border: '1px solid var(--border)' }}>
                   <div className="px-4 py-2.5 flex items-center gap-2" style={{ background: 'var(--bg-raised)', borderBottom: '1px solid var(--border)' }}>
                     <Icon name="checkCircle" size={14} className="text-green-500" />
-                    <span className="text-xs font-bold text-green-500 dark:text-green-400 uppercase tracking-wider">Created ({result.created_count})</span>
+                    <span className="text-xs font-bold text-green-500 uppercase tracking-wider">Created ({result.created_count})</span>
                   </div>
-                  <div className="divide-y" style={{ '--tw-divide-opacity': 1 }}>
-                    {result.created.map(u => (
-                      <div key={u.roll_number} className="px-4 py-2.5 flex items-center gap-3 text-xs">
-                        <span className="font-mono font-bold text-indigo-600 dark:text-indigo-400">{u.roll_number}</span>
-                        <span className="text-[var(--text-secondary)] flex-1">{u.name}</span>
-                        {u.auto_password && <code className="font-mono bg-indigo-500/10 text-indigo-500 px-2 py-0.5 rounded-lg">{u.auto_password}</code>}
-                      </div>
-                    ))}
-                  </div>
+                  {result.created.map(u => (
+                    <div key={u.roll_number} className="px-4 py-2.5 flex items-center gap-3 text-xs" style={{ borderTop: '1px solid var(--border)' }}>
+                      <span className="font-mono font-bold text-indigo-600 dark:text-indigo-400">{u.roll_number}</span>
+                      <span className="text-[var(--text-secondary)] flex-1">{u.name}</span>
+                      {u.auto_password && <code className="font-mono bg-indigo-500/10 text-indigo-500 px-2 py-0.5 rounded-lg">{u.auto_password}</code>}
+                    </div>
+                  ))}
                 </div>
               )}
-
-              {/* Failed list */}
               {result.failed?.length > 0 && (
                 <div className="rounded-2xl overflow-hidden" style={{ border: '1px solid rgba(239,68,68,0.2)' }}>
                   <div className="px-4 py-2.5 flex items-center gap-2" style={{ background: 'rgba(239,68,68,0.05)', borderBottom: '1px solid rgba(239,68,68,0.15)' }}>
-                    <Icon name="shieldAlert" size={14} className="text-red-500" />
+                    <Icon name="x" size={14} className="text-red-500" />
                     <span className="text-xs font-bold text-red-500 uppercase tracking-wider">Failed ({result.failed_count})</span>
                   </div>
-                  <div className="divide-y divide-red-500/10">
-                    {result.failed.map(f => (
-                      <div key={f.row} className="px-4 py-2.5 text-xs">
-                        <div className="flex items-center gap-2 mb-0.5">
-                          <span className="text-[var(--text-faint)]">Row {f.row}</span>
-                          <span className="font-mono font-bold text-[var(--text-secondary)]">{f.data.roll_number || '—'}</span>
-                        </div>
-                        <p className="text-red-400">{Object.entries(f.errors).map(([k, v]) => `${k}: ${Array.isArray(v) ? v[0] : v}`).join(' · ')}</p>
-                      </div>
-                    ))}
-                  </div>
+                  {result.failed.map(f => (
+                    <div key={f.row} className="px-4 py-2.5 text-xs" style={{ borderTop: '1px solid rgba(239,68,68,0.1)' }}>
+                      <span className="text-[var(--text-faint)] mr-2">Row {f.row}</span>
+                      <span className="font-mono text-[var(--text-secondary)] mr-2">{f.data.roll_number || '—'}</span>
+                      <span className="text-red-400">{Object.entries(f.errors).map(([k, v]) => `${k}: ${Array.isArray(v) ? v[0] : v}`).join(' · ')}</span>
+                    </div>
+                  ))}
                 </div>
               )}
-
               <Button size="sm" variant="secondary" onClick={() => { setRes(null); setRows([blankRow()]); setCsvFile(null) }}>
                 Create More
               </Button>
@@ -379,14 +333,11 @@ function BulkModal({ onClose, onDone }) {
           )}
         </div>
 
-        {/* Footer */}
         {!result && (
           <div className="px-5 py-4 shrink-0 flex gap-3" style={{ borderTop: '1px solid var(--border)' }}>
             <Button loading={loading} onClick={submit} disabled={mode === 'csv' && !csvFile}>
               <Icon name="userPlus" size={14} />
-              {mode === 'manual'
-                ? `Create ${rows.length} User${rows.length !== 1 ? 's' : ''}`
-                : 'Upload & Create'}
+              {mode === 'manual' ? `Create ${rows.length} User${rows.length !== 1 ? 's' : ''}` : 'Upload & Create'}
             </Button>
             <Button variant="secondary" onClick={onClose}>Cancel</Button>
           </div>
@@ -396,22 +347,77 @@ function BulkModal({ onClose, onDone }) {
   )
 }
 
-// ── Edit Dept Modal ───────────────────────────────────────────────────────────
+// ── Delete All Confirm Modal ─────────────────────────────────────────────────
+function DeleteAllModal({ onClose, onDone, count }) {
+  const [loading, setL]  = useState(false)
+  const [confirm, setCon] = useState('')
+  const [error, setErr]  = useState('')
+
+  const submit = async () => {
+    if (confirm !== 'DELETE') { setErr('Type DELETE to confirm'); return }
+    setL(true)
+    try {
+      await adminAPI.deleteAll()
+      onDone()
+      onClose()
+    } catch (err) { setErr(extractError(err)) }
+    finally { setL(false) }
+  }
+
+  return (
+    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+      className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4"
+      style={{ background: 'rgba(0,0,0,0.8)', backdropFilter: 'blur(6px)' }}>
+      <motion.div initial={{ y: 60, opacity: 0 }} animate={{ y: 0, opacity: 1 }} exit={{ y: 60, opacity: 0 }} transition={spring}
+        className="w-full sm:max-w-sm rounded-t-3xl sm:rounded-2xl shadow-2xl"
+        style={{ background: 'var(--bg-surface)', border: '1px solid rgba(239,68,68,0.3)' }}>
+        <div className="p-5 space-y-4">
+          {/* Warning icon */}
+          <div className="w-12 h-12 rounded-2xl bg-red-500/10 flex items-center justify-center">
+            <Icon name="shieldAlert" size={22} className="text-red-500" />
+          </div>
+          <div>
+            <h2 className="font-bold text-base text-[var(--text-primary)]">Delete All Students?</h2>
+            <p className="text-sm text-[var(--text-secondary)] mt-1">
+              This will permanently delete <span className="font-bold text-red-500">{count} student account{count !== 1 ? 's' : ''}</span>. Admin accounts will not be affected. This cannot be undone.
+            </p>
+          </div>
+          <Alert type="error" message={error} onClose={() => setErr('')} />
+          <div>
+            <label className="block text-xs font-bold text-[var(--text-muted)] uppercase tracking-wider mb-2">
+              Type <span className="text-red-500 font-mono">DELETE</span> to confirm
+            </label>
+            <input value={confirm} onChange={e => setCon(e.target.value.toUpperCase())}
+              placeholder="DELETE"
+              className="w-full px-3 py-2.5 rounded-xl text-sm font-mono outline-none"
+              style={{ background: 'var(--bg-raised)', border: `2px solid ${confirm === 'DELETE' ? 'rgba(239,68,68,0.5)' : 'var(--border)'}`, color: 'var(--text-primary)' }} />
+          </div>
+          <div className="flex gap-3">
+            <Button variant="danger" loading={loading} fullWidth onClick={submit} disabled={confirm !== 'DELETE'}>
+              Delete {count} Students
+            </Button>
+            <Button variant="secondary" onClick={onClose} className="shrink-0">Cancel</Button>
+          </div>
+        </div>
+      </motion.div>
+    </motion.div>
+  )
+}
+
+// ── Edit Dept Modal ──────────────────────────────────────────────────────────
 function EditDeptModal({ user, onClose, onSaved }) {
   const [dept, setDept] = useState(user.department || 'SE')
-  const [loading, setL] = useState(false)
-  const [error, setErr] = useState('')
+  const [loading, setL] = useState(false); const [error, setErr] = useState('')
   const save = async () => {
     setL(true); setErr('')
     try { await authAPI.updateUser(user.id, { department: dept }); onSaved(); onClose() }
-    catch (err) { setErr(extractError(err)) }
-    finally { setL(false) }
+    catch (err) { setErr(extractError(err)) } finally { setL(false) }
   }
   return (
     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
       className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4"
       style={{ background: 'rgba(0,0,0,0.7)', backdropFilter: 'blur(6px)' }}>
-      <motion.div initial={{ y: 60, opacity: 0 }} animate={{ y: 0, opacity: 1 }} exit={{ y: 60, opacity: 0 }} transition={springSmooth}
+      <motion.div initial={{ y: 60, opacity: 0 }} animate={{ y: 0, opacity: 1 }} exit={{ y: 60, opacity: 0 }} transition={spring}
         className="w-full sm:max-w-sm rounded-t-3xl sm:rounded-2xl shadow-2xl"
         style={{ background: 'var(--bg-surface)', border: '1px solid var(--border)' }}>
         <div className="flex items-center justify-between px-5 py-4" style={{ borderBottom: '1px solid var(--border)' }}>
@@ -437,13 +443,12 @@ function EditDeptModal({ user, onClose, onSaved }) {
   )
 }
 
-// ── User Card ─────────────────────────────────────────────────────────────────
+// ── User Card ────────────────────────────────────────────────────────────────
 function UserCard({ u, onEdit, onToggleRole, onDelete, changing, deleting }) {
-  const initials = u.name.split(' ').map(w => w[0]).join('').slice(0, 2)
-  const dColor   = u.department === 'SE' ? 'text-orange-500 dark:text-orange-400' : u.department === 'CS' ? 'text-cyan-500 dark:text-cyan-400' : 'text-[var(--text-muted)]'
-  const dLabel   = u.department === 'SE' ? 'Software Engineering' : u.department === 'CS' ? 'Computer Science' : 'No department'
+  const initials  = u.name.split(' ').map(w => w[0]).join('').slice(0, 2)
+  const dColor    = u.department === 'SE' ? 'text-orange-500 dark:text-orange-400' : u.department === 'CS' ? 'text-cyan-500 dark:text-cyan-400' : 'text-[var(--text-muted)]'
+  const dLabel    = u.department === 'SE' ? 'Software Engineering' : u.department === 'CS' ? 'Computer Science' : 'No department'
   const dBorderColor = u.department === 'SE' ? '#fb923c' : u.department === 'CS' ? '#22d3ee' : 'var(--border)'
-
   return (
     <motion.div variants={fadeUp} layout
       className="rounded-2xl overflow-hidden"
@@ -470,8 +475,7 @@ function UserCard({ u, onEdit, onToggleRole, onDelete, changing, deleting }) {
             <Icon name="pencil" size={12} /> Dept
           </Button>
           <Button variant={u.role === 'admin' ? 'danger' : 'outline'} size="sm"
-            loading={changing === u.id} onClick={() => onToggleRole(u)}
-            className="flex-1 sm:flex-none">
+            loading={changing === u.id} onClick={() => onToggleRole(u)} className="flex-1 sm:flex-none">
             {u.role === 'admin' ? <><Icon name="shieldX" size={12} /> Revoke</> : <><Icon name="shieldCheck" size={12} /> Admin</>}
           </Button>
           <Button variant="danger" size="sm" loading={deleting === u.id} onClick={() => onDelete(u)}>
@@ -483,20 +487,21 @@ function UserCard({ u, onEdit, onToggleRole, onDelete, changing, deleting }) {
   )
 }
 
-// ── Main Page ─────────────────────────────────────────────────────────────────
+// ── Main Page ────────────────────────────────────────────────────────────────
 export default function AdminUsers() {
   const { isAdmin } = useAuth(); const { navigate } = useApp()
-  const [users, setUsers]       = useState([])
-  const [loading, setLoad]      = useState(true)
-  const [deptTab, setDeptTab]   = useState('all')
-  const [query, setQuery]       = useState('')
-  const [error, setError]       = useState('')
-  const [ok, setOk]             = useState('')
-  const [showAdd, setShowAdd]   = useState(false)
-  const [showBulk, setShowBulk] = useState(false)
-  const [editUser, setEditUser] = useState(null)
-  const [changing, setChanging] = useState(null)
-  const [deleting, setDeleting] = useState(null)
+  const [users, setUsers]         = useState([])
+  const [loading, setLoad]        = useState(true)
+  const [deptTab, setDeptTab]     = useState('all')
+  const [query, setQuery]         = useState('')
+  const [error, setError]         = useState('')
+  const [ok, setOk]               = useState('')
+  const [showAdd, setShowAdd]     = useState(false)
+  const [showBulk, setShowBulk]   = useState(false)
+  const [showDelAll, setDelAll]   = useState(false)
+  const [editUser, setEditUser]   = useState(null)
+  const [changing, setChanging]   = useState(null)
+  const [deleting, setDeleting]   = useState(null)
 
   const loadUsers = () => {
     setLoad(true)
@@ -511,33 +516,33 @@ export default function AdminUsers() {
   const toggleRole = async u => {
     setChanging(u.id); setError(''); setOk('')
     try { await authAPI.updateUser(u.id, { role: u.role === 'admin' ? 'student' : 'admin' }); setOk(`${u.name} updated.`); loadUsers() }
-    catch (e) { setError(extractError(e)) }
-    finally { setChanging(null) }
+    catch (e) { setError(extractError(e)) } finally { setChanging(null) }
   }
   const del = async u => {
     if (!window.confirm(`Delete ${u.roll_number}?`)) return
     setDeleting(u.id)
     try { await authAPI.deleteUser(u.id); setOk(`${u.name} deleted.`); loadUsers() }
-    catch (e) { setError(extractError(e)) }
-    finally { setDeleting(null) }
+    catch (e) { setError(extractError(e)) } finally { setDeleting(null) }
   }
 
-  const filtered = users.filter(u =>
+  const filtered  = users.filter(u =>
     u.name.toLowerCase().includes(query.toLowerCase()) ||
     u.roll_number.toLowerCase().includes(query.toLowerCase()) ||
     u.email.toLowerCase().includes(query.toLowerCase())
   )
-  const seCnt    = users.filter(u => u.department === 'SE').length
-  const csCnt    = users.filter(u => u.department === 'CS').length
-  const unCnt    = users.filter(u => !u.department).length
-  const unverCnt = users.filter(u => !u.is_verified).length
+  const studentCnt = users.filter(u => u.role === 'student').length
+  const seCnt      = users.filter(u => u.department === 'SE').length
+  const csCnt      = users.filter(u => u.department === 'CS').length
+  const unCnt      = users.filter(u => !u.department).length
+  const unverCnt   = users.filter(u => !u.is_verified).length
 
   return (
     <div className="space-y-6">
       <AnimatePresence>
-        {showAdd  && <AddModal  onClose={() => setShowAdd(false)}  onDone={loadUsers} />}
-        {showBulk && <BulkModal onClose={() => setShowBulk(false)} onDone={loadUsers} />}
-        {editUser && <EditDeptModal user={editUser} onClose={() => setEditUser(null)} onSaved={loadUsers} />}
+        {showAdd   && <AddModal     onClose={() => setShowAdd(false)}  onDone={loadUsers} />}
+        {showBulk  && <BulkModal    onClose={() => setShowBulk(false)} onDone={loadUsers} />}
+        {showDelAll && <DeleteAllModal onClose={() => setDelAll(false)} onDone={() => { loadUsers(); setOk('All students deleted.') }} count={studentCnt} />}
+        {editUser  && <EditDeptModal user={editUser} onClose={() => setEditUser(null)} onSaved={loadUsers} />}
       </AnimatePresence>
 
       {/* Header */}
@@ -622,6 +627,22 @@ export default function AdminUsers() {
               ))}
             </motion.div>
       }
+
+      {/* Danger Zone */}
+      {!loading && users.length > 0 && (
+        <motion.div variants={fadeUp} className="rounded-2xl p-4 mt-4"
+          style={{ border: '1px solid rgba(239,68,68,0.2)', background: 'rgba(239,68,68,0.03)' }}>
+          <div className="flex items-center justify-between gap-4 flex-wrap">
+            <div>
+              <p className="text-sm font-bold text-red-500">Danger Zone</p>
+              <p className="text-xs text-[var(--text-muted)] mt-0.5">Delete all student accounts permanently. Admin accounts stay safe.</p>
+            </div>
+            <Button variant="danger" size="sm" onClick={() => setDelAll(true)}>
+              <Icon name="x" size={13} /> Delete All Students
+            </Button>
+          </div>
+        </motion.div>
+      )}
     </div>
   )
 }
