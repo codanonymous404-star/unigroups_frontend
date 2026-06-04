@@ -467,7 +467,7 @@ export default function Dashboard() {
           {/* Quick actions */}
           <motion.div variants={fadeUp}>
             <p className="text-xs font-semibold text-[var(--text-muted)] uppercase tracking-widest mb-3">Quick Actions</p>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
               {[
                 { icon: 'plus',   label: 'Create Group',  desc: 'Start a new team',       page: 'create-group',    gradient: 'linear-gradient(135deg, #f97316, #ea580c)' },
                 { icon: 'search', label: 'Browse Groups', desc: 'Find groups to join',     page: 'browse-groups',   gradient: 'linear-gradient(135deg, #06b6d4, #0891b2)' },
@@ -477,7 +477,7 @@ export default function Dashboard() {
                   whileHover={{ y: -4, scale: 1.01, boxShadow: '0 12px 30px rgba(99,102,241,0.15)' }}
                   whileTap={{ scale: 0.98 }}
                   className={`flex items-center gap-4 p-4 rounded-2xl border-0 text-left relative overflow-hidden text-white shadow-md cursor-pointer transition-all ${
-                    idx === 2 ? 'sm:col-span-2' : ''
+                    idx === 2 ? 'col-span-2 md:col-span-1' : ''
                   }`}
                   style={{ background: a.gradient }}
                 >
