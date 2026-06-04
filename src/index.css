@@ -227,20 +227,32 @@ body::before {
 }
 
 .subject-wallet:hover .wallet-group-card.card-pos-0 {
-  transform: translateY(-110px) rotate(-4deg);
+  transform: translateY(-130px) rotate(-3deg);
 }
 
 .subject-wallet:hover .wallet-group-card.card-pos-1 {
-  transform: translateY(-65px) rotate(2deg);
+  transform: translateY(-70px) rotate(2deg);
 }
 
 .subject-wallet:hover .wallet-group-card.card-pos-2 {
-  transform: translateY(-20px) rotate(-1deg);
+  transform: translateY(-10px);
 }
 
-/* Individual card hover focus */
-.wallet-group-card:hover {
+/* Individual card hover focus based on their position to prevent collision */
+.subject-wallet:hover .wallet-group-card.card-pos-0:hover {
   z-index: 100 !important;
-  transform: translateY(-120px) scale(1.05) rotate(0deg) !important;
+  transform: translateY(-145px) scale(1.04) rotate(0deg) !important;
+  box-shadow: 0 12px 25px rgba(0,0,0,0.35);
+}
+
+.subject-wallet:hover .wallet-group-card.card-pos-1:hover {
+  z-index: 100 !important;
+  transform: translateY(-85px) scale(1.04) rotate(0deg) !important;
+  box-shadow: 0 12px 25px rgba(0,0,0,0.35);
+}
+
+.subject-wallet:hover .wallet-group-card.card-pos-2:hover {
+  z-index: 100 !important;
+  transform: translateY(-25px) scale(1.04) rotate(0deg) !important;
   box-shadow: 0 12px 25px rgba(0,0,0,0.35);
 }
