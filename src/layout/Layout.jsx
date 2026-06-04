@@ -56,14 +56,14 @@ export default function Layout({ children }) {
       <AnimatePresence>
         {open && (
           <motion.div
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 0.95 }}
+            initial={{ opacity: 0, y: -10, scale: 0.95 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: -10, scale: 0.95 }}
             transition={springSmooth}
-            className="fixed inset-0 z-[100] bg-[var(--bg-base)] flex flex-col justify-between p-6 lg:hidden"
+            className="fixed top-20 left-4 right-4 z-[100] max-h-[80vh] rounded-3xl border border-[var(--border)] shadow-2xl flex flex-col justify-between p-5 lg:hidden overflow-y-auto"
             style={{ 
-              backdropFilter: 'blur(20px)',
-              background: dark ? 'rgba(6,6,8,0.98)' : 'rgba(241,243,248,0.98)'
+              backdropFilter: 'blur(24px)',
+              background: dark ? 'rgba(11,12,16,0.95)' : 'rgba(255,255,255,0.95)'
             }}
           >
             {/* Header row in modal */}
