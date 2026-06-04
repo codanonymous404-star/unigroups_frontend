@@ -52,7 +52,8 @@ function SubjectWallet({ subject, navigate, membersMap, deptKey }) {
       
       {/* Group cards - max 3 stacked inside the wallet */}
       {groups.slice(0, 3).map((g, index) => {
-        const mc = membersMap[g.id]?.length || 0;
+        const groupMembers = membersMap[g.id] || [];
+        const mc = groupMembers.length || g.member_count || 0;
         const max = g.max_members || 5;
         
         // Dynamically shift card slots so they always stack overlapping behind each other
@@ -72,6 +73,22 @@ function SubjectWallet({ subject, navigate, membersMap, deptKey }) {
                   <Icon name={g.status === 'open' ? 'unlock' : 'lock'} size={11} className="text-white/90" />
                 </div>
               </div>
+              
+              {/* Member names list */}
+              <div className="my-1 flex flex-wrap gap-1 items-center max-h-[38px] overflow-hidden">
+                {groupMembers.slice(0, 3).map((m, i) => {
+                  const u = m.user || m;
+                  return (
+                    <span key={u?.id || i} className="text-[8px] font-semibold px-1 py-0.5 rounded bg-white/20 text-white truncate max-w-[70px]">
+                      {u?.name?.split(' ')[0]}
+                    </span>
+                  )
+                })}
+                {groupMembers.length > 3 && (
+                  <span className="text-[8px] font-bold text-white/80">+{groupMembers.length - 3}</span>
+                )}
+              </div>
+
               <div className="card-bottom">
                 <div className="card-info">
                   <span className="label">Members</span>
