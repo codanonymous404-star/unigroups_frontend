@@ -187,7 +187,7 @@ function ProfileInfoSection({ user }) {
           <div>
             <p className="font-bold text-base text-[var(--text-primary)]">{user?.name}</p>
             <p className="text-xs font-mono font-bold text-indigo-600 dark:text-indigo-400 mt-0.5">{user?.roll_number}</p>
-            <div className="flex items-center gap-2 mt-1.5">
+            <div className="flex items-center gap-2 mt-1.5 flex-wrap">
               {user?.is_verified
                 ? <span className="inline-flex items-center gap-1 text-[10px] font-semibold text-green-600 dark:text-green-400 bg-green-50 dark:bg-green-400/10 px-2 py-0.5 rounded-full">
                     <Icon name="check" size={9} /> Verified
@@ -196,6 +196,16 @@ function ProfileInfoSection({ user }) {
                     Unverified
                   </span>
               }
+              <button 
+                onClick={() => {
+                  const newVal = localStorage.getItem('use_hijab_avatar') !== 'true';
+                  localStorage.setItem('use_hijab_avatar', String(newVal));
+                  window.location.reload();
+                }}
+                className="inline-flex items-center gap-1 text-[10px] font-semibold text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-400/10 px-2 py-0.5 rounded-full hover:bg-indigo-100 dark:hover:bg-indigo-400/20 active:scale-95 transition-all"
+              >
+                <Icon name="user" size={9} /> {localStorage.getItem('use_hijab_avatar') === 'true' ? 'Use Initials' : 'Use Burqa Avatar'}
+              </button>
               {user?.role === 'admin' &&
                 <span className="inline-flex items-center gap-1 text-[10px] font-semibold text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-400/10 px-2 py-0.5 rounded-full">
                   <Icon name="shieldCheck" size={9} /> Admin

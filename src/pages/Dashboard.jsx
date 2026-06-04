@@ -17,10 +17,14 @@ const DEPT = {
 
 function StatBox({ label, value, icon }) {
   return (
-    <motion.div variants={fadeUp} className="bg-[var(--bg-surface)] border border-[var(--border)] rounded-2xl p-5">
-      <div className="mb-2 text-indigo-600 dark:text-indigo-400"><Icon name={icon} size={22} /></div>
-      <p className="text-3xl font-bold text-[var(--text-primary)]">{value}</p>
-      <p className="text-xs font-medium text-[var(--text-muted)] mt-1">{label}</p>
+    <motion.div variants={fadeUp} className="bg-[var(--bg-surface)] border border-[var(--border)] rounded-xl p-3 flex items-center gap-3">
+      <div className="text-indigo-600 dark:text-indigo-400 p-1.5 rounded-lg bg-[var(--bg-raised)] shrink-0">
+        <Icon name={icon} size={15} />
+      </div>
+      <div className="min-w-0">
+        <p className="text-lg font-extrabold text-[var(--text-primary)] leading-tight">{value}</p>
+        <p className="text-[10px] font-bold text-[var(--text-muted)] mt-0.5 truncate">{label}</p>
+      </div>
     </motion.div>
   )
 }
