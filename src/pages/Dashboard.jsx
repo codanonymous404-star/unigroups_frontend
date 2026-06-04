@@ -17,11 +17,11 @@ const DEPT = {
 
 function StatBox({ label, value, icon }) {
   return (
-    <div className="bg-[var(--bg-surface)] border border-[var(--border)] rounded-2xl p-5">
+    <motion.div variants={fadeUp} className="bg-[var(--bg-surface)] border border-[var(--border)] rounded-2xl p-5">
       <div className="mb-2 text-indigo-600 dark:text-indigo-400"><Icon name={icon} size={22} /></div>
       <p className="text-3xl font-bold text-[var(--text-primary)]">{value}</p>
       <p className="text-xs font-medium text-[var(--text-muted)] mt-1">{label}</p>
-    </div>
+    </motion.div>
   )
 }
 
@@ -188,49 +188,72 @@ export default function Dashboard() {
         <Button onClick={() => navigate('create-group')}><Icon name="plus" size={15} /> New Group</Button>
       </div>
 
-      {/* Stats */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        {loading ? Array(4).fill(0).map((_, i) => <Skeleton key={i} className="h-28" />) : <>
-          <StatBox label="Total Groups" value={all.length}        icon="layers" />
-          <StatBox label="My Groups"    value={mine.length}       icon="users" />
-          <StatBox label="Open Groups"  value={open}              icon="unlock" />
-          <StatBox label="Locked"       value={all.length - open} icon="lock" />
-        </>}
-      </div>
+      {loading ? (
+        /* Unified Loading Skeletons */
+        <div className="space-y-10">
+          {/* Stats Skeletons */}
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+            {Array(4).fill(0).map((_, i) => <Skeleton key={i} className="h-28" />)}
+          </div>
+          
+          {/* Quick Actions Skeleton */}
+          <div className="space-y-3">
+            <div className="h-4 w-28 bg-[var(--border)] rounded animate-pulse" />
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+              {Array(3).fill(0).map((_, i) => <Skeleton key={i} className="h-20" />)}
+            </div>
+          </div>
 
-      {/* Quick actions */}
-      <div>
-        <p className="text-xs font-semibold text-[var(--text-muted)] uppercase tracking-widest mb-3">Quick Actions</p>
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-          {[
-            { icon: 'plus',   label: 'Create Group',  desc: 'Start a new team',       page: 'create-group'  },
-            { icon: 'search', label: 'Browse Groups', desc: 'Find groups to join',     page: 'browse-groups' },
-            { icon: 'users',  label: 'My Groups',     desc: 'View your memberships',   page: 'my-groups'     },
-          ].map(a => (
-            <motion.button key={a.page} onClick={() => navigate(a.page)}
-              whileHover={{ x: 4, scale: 1.01, borderColor: 'rgba(99,102,241,0.4)', boxShadow: '0 8px 30px rgba(99,102,241,0.08)', transition: { type: 'spring', stiffness: 500, damping: 28 } }}
-              whileTap={{ scale: 0.97, transition: { type: 'spring', stiffness: 600, damping: 30 } }}
-              className="flex items-center gap-4 p-4 rounded-2xl bg-[var(--bg-surface)] border border-[var(--border)] transition-colors group text-left">
-              <motion.div whileHover={{ scale: 1.12, rotate: [-3, 3, -3, 0], transition: { duration: 0.3 } }}
-                className="w-11 h-11 rounded-xl bg-[var(--bg-raised)] group-hover:bg-indigo-500/10 flex items-center justify-center text-indigo-600 dark:text-indigo-400 shrink-0 transition-colors">
-                <Icon name={a.icon} size={18} />
-              </motion.div>
-              <div className="flex-1">
-                <p className="font-semibold text-sm text-[var(--text-primary)] group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">{a.label}</p>
-                <p className="text-xs text-[var(--text-muted)] mt-0.5">{a.desc}</p>
-              </div>
-              <motion.div whileHover={{ x: 3 }} transition={{ type: 'spring', stiffness: 500 }}>
-                <Icon name="arrowRight" size={15} className="text-[var(--text-faint)] group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors shrink-0" />
-              </motion.div>
-            </motion.button>
-          ))}
+          {/* Groups Skeletons */}
+          <div className="space-y-6">
+            <div className="h-6 w-48 bg-[var(--border)] rounded animate-pulse" />
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              {Array(2).fill(0).map((_, i) => <Skeleton key={i} className="h-40" />)}
+            </div>
+          </div>
         </div>
-      </div>
+      ) : (
+        /* Loaded Content with Staggered Entrance Animation */
+        <motion.div variants={staggerContainer} initial="initial" animate="animate" className="space-y-10">
+          {/* Stats */}
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+            <StatBox label="Total Groups" value={all.length}        icon="layers" />
+            <StatBox label="My Groups"    value={mine.length}       icon="users" />
+            <StatBox label="Open Groups"  value={open}              icon="unlock" />
+            <StatBox label="Locked"       value={all.length - open} icon="lock" />
+          </div>
 
-      {/* Groups by dept → subject */}
-      {loading
-        ? <div className="space-y-3">{Array(4).fill(0).map((_, i) => <Skeleton key={i} className="h-40" />)}</div>
-        : <motion.div variants={staggerContainer} initial="initial" animate="animate" className="space-y-12">
+          {/* Quick actions */}
+          <motion.div variants={fadeUp}>
+            <p className="text-xs font-semibold text-[var(--text-muted)] uppercase tracking-widest mb-3">Quick Actions</p>
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+              {[
+                { icon: 'plus',   label: 'Create Group',  desc: 'Start a new team',       page: 'create-group'  },
+                { icon: 'search', label: 'Browse Groups', desc: 'Find groups to join',     page: 'browse-groups' },
+                { icon: 'users',  label: 'My Groups',     desc: 'View your memberships',   page: 'my-groups'     },
+              ].map(a => (
+                <motion.button key={a.page} onClick={() => navigate(a.page)}
+                  whileHover={{ x: 4, scale: 1.01, borderColor: 'rgba(99,102,241,0.4)', boxShadow: '0 8px 30px rgba(99,102,241,0.08)', transition: { type: 'spring', stiffness: 500, damping: 28 } }}
+                  whileTap={{ scale: 0.97, transition: { type: 'spring', stiffness: 600, damping: 30 } }}
+                  className="flex items-center gap-4 p-4 rounded-2xl bg-[var(--bg-surface)] border border-[var(--border)] transition-colors group text-left">
+                  <motion.div whileHover={{ scale: 1.12, rotate: [-3, 3, -3, 0], transition: { duration: 0.3 } }}
+                    className="w-11 h-11 rounded-xl bg-[var(--bg-raised)] group-hover:bg-indigo-500/10 flex items-center justify-center text-indigo-600 dark:text-indigo-400 shrink-0 transition-colors">
+                    <Icon name={a.icon} size={18} />
+                  </motion.div>
+                  <div className="flex-1">
+                    <p className="font-semibold text-sm text-[var(--text-primary)] group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">{a.label}</p>
+                    <p className="text-xs text-[var(--text-muted)] mt-0.5">{a.desc}</p>
+                  </div>
+                  <motion.div whileHover={{ x: 3 }} transition={{ type: 'spring', stiffness: 500 }}>
+                    <Icon name="arrowRight" size={15} className="text-[var(--text-faint)] group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors shrink-0" />
+                  </motion.div>
+                </motion.button>
+              ))}
+            </div>
+          </motion.div>
+
+          {/* Groups by dept → subject */}
+          <motion.div variants={fadeUp} className="space-y-12">
             {myDept !== 'CS'
               ? <><DeptSection dept="SE" data={byDept.SE} navigate={navigate} membersMap={membersMap} />
                   <DeptSection dept="CS" data={byDept.CS} navigate={navigate} membersMap={membersMap} /></>
@@ -238,7 +261,8 @@ export default function Dashboard() {
                   <DeptSection dept="SE" data={byDept.SE} navigate={navigate} membersMap={membersMap} /></>
             }
           </motion.div>
-      }
+        </motion.div>
+      )}
     </div>
   )
 }
