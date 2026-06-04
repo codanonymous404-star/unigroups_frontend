@@ -86,7 +86,7 @@ export default function Layout({ children }) {
             <div className="flex-1 py-6 flex flex-col justify-center space-y-6 overflow-y-auto">
               <div className="space-y-2">
                 <p className="px-3 text-[10px] font-bold uppercase tracking-widest text-[var(--text-faint)]">Navigation</p>
-                <div className="space-y-2">
+                <div className="grid grid-cols-2 gap-2">
                   {NAV.map((item) => {
                     const active = currentPage === item.id;
                     return (
@@ -96,17 +96,14 @@ export default function Layout({ children }) {
                           navigate(item.id);
                           setOpen(false);
                         }}
-                        className={`w-full flex items-center gap-4 px-4 py-3 rounded-2xl text-sm font-bold border transition-all ${
+                        className={`flex items-center gap-2.5 px-3.5 py-3 rounded-2xl text-xs font-bold border transition-all ${
                           active
                             ? 'bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 border-indigo-100 dark:border-indigo-500/20 shadow-md'
                             : 'bg-[var(--bg-surface)] text-[var(--text-secondary)] border-[var(--border)] hover:bg-[var(--bg-raised)]'
                         }`}
                       >
-                        <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${active ? 'bg-indigo-500/10' : 'bg-[var(--bg-raised)]'}`}>
-                          <Icon name={item.icon} size={15} className={active ? 'text-indigo-600 dark:text-indigo-400' : 'text-[var(--text-muted)]'} />
-                        </div>
-                        <span className="flex-1 text-left">{item.label}</span>
-                        <Icon name="chevronRight" size={12} className="text-[var(--text-faint)]" />
+                        <Icon name={item.icon} size={14} className={active ? 'text-indigo-600 dark:text-indigo-400' : 'text-[var(--text-muted)]'} />
+                        <span className="truncate">{item.label}</span>
                       </button>
                     )
                   })}
@@ -117,7 +114,7 @@ export default function Layout({ children }) {
               {isAdmin && (
                 <div className="space-y-2 pt-4 border-t border-[var(--border)]">
                   <p className="px-3 text-[10px] font-bold uppercase tracking-widest text-[var(--text-faint)]">Admin Panel</p>
-                  <div className="space-y-2">
+                  <div className="grid grid-cols-2 gap-2">
                     {ADMIN_NAV.map((item) => {
                       const active = currentPage === item.id;
                       return (
@@ -127,17 +124,14 @@ export default function Layout({ children }) {
                             navigate(item.id);
                             setOpen(false);
                           }}
-                          className={`w-full flex items-center gap-4 px-4 py-3 rounded-2xl text-sm font-bold border transition-all ${
+                          className={`flex items-center gap-2.5 px-3.5 py-3 rounded-2xl text-xs font-bold border transition-all ${
                             active
                               ? 'bg-red-50 dark:bg-red-500/10 text-red-600 dark:text-red-400 border-red-100 dark:border-red-500/20 shadow-md'
                               : 'bg-[var(--bg-surface)] text-[var(--text-secondary)] border-[var(--border)] hover:bg-[var(--bg-raised)]'
                         }`}
                       >
-                        <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${active ? 'bg-red-500/10' : 'bg-[var(--bg-raised)]'}`}>
-                          <Icon name={item.icon} size={15} className={active ? 'text-red-600 dark:text-red-400' : 'text-[var(--text-muted)]'} />
-                        </div>
-                        <span className="flex-1 text-left">{item.label}</span>
-                        <Icon name="chevronRight" size={12} className="text-[var(--text-faint)]" />
+                        <Icon name={item.icon} size={14} className={active ? 'text-red-600 dark:text-red-400' : 'text-[var(--text-muted)]'} />
+                        <span className="truncate">{item.label}</span>
                       </button>
                     )
                   })}
