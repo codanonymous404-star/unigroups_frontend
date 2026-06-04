@@ -28,40 +28,98 @@ function StatBox({ label, value, icon }) {
 // ── Interactive Subject Wallet Card ───────────────────────────────────────────
 function SubjectWallet({ subject, navigate, membersMap, deptKey }) {
   const groups = subject.groups || []
+  const [hovered, setHovered] = useState(false)
+  const [hoveredCardIndex, setHoveredCardIndex] = useState(null)
   
-  // High quality premium color schemes matching SE (orange) and CS (cyan/blue)
-  const cardGradients = deptKey === 'SE' 
-    ? [
-        'linear-gradient(135deg, #f97316, #ea580c)',
-        'linear-gradient(135deg, #ea580c, #c2410c)',
-        'linear-gradient(135deg, #f59e0b, #d97706)'
-      ]
-    : [
-        'linear-gradient(135deg, #06b6d4, #0891b2)',
-        'linear-gradient(135deg, #0891b2, #0e7490)',
-        'linear-gradient(135deg, #3b82f6, #2563eb)'
-      ];
+  // Modulo generator for premium colors matching SE (orange) and CS (cyan/blue)
+  const getCardGradient = (index) => {
+    const gradients = deptKey === 'SE' 
+      ? [
+          'linear-gradient(135deg, #f97316, #ea580c)',
+          'linear-gradient(135deg, #ea580c, #c2410c)',
+          'linear-gradient(135deg, #f59e0b, #d97706)',
+          'linear-gradient(135deg, #b45309, #78350f)'
+        ]
+      : [
+          'linear-gradient(135deg, #06b6d4, #0891b2)',
+          'linear-gradient(135deg, #0891b2, #0e7490)',
+          'linear-gradient(135deg, #3b82f6, #2563eb)',
+          'linear-gradient(135deg, #1d4ed8, #1e3a8a)'
+        ];
+    return gradients[index % gradients.length];
+  };
 
   const pocketColor = deptKey === 'SE' ? '#431407' : '#0f172a'; // Deep rustic dark-orange / deep slate navy
   const pocketStroke = deptKey === 'SE' ? '#ea580c' : '#06b6d4';
 
   return (
-    <div className="subject-wallet group">
+    <div 
+      className="subject-wallet group"
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => { setHovered(false); setHoveredCardIndex(null); }}
+      onTouchStart={() => setHovered(true)}
+    >
       {/* Wallet back panel */}
       <div className="wallet-back-panel" />
       
-      {/* Group cards - max 3 stacked inside the wallet */}
-      {groups.slice(0, 3).map((g, index) => {
+      {/* Dynamic Group cards - renders all groups fanned out dynamically */}
+      {groups.map((g, index) => {
         const groupMembers = membersMap[g.id] || [];
         const mc = groupMembers.length || g.member_count || 0;
         const max = g.max_members || 5;
+        
+        const total = groups.length;
+        const zIndex = hoveredCardIndex === index ? 100 : (10 + index);
+        
+        // 1. Initial stacked layout bottom positioning
+        const step = total > 1 ? Math.min(22, 55 / (total - 1)) : 0;
+        const initialBottom = 35 + (total - 1 - index) * step;
+        
+        // 2. Staggered dynamic fan values on hover
+        let ty = 0;
+        let tx = 0;
+        let rot = 0;
+        
+        if (total === 1) {
+          ty = -90; // single card slides out fully to be visible
+        } else {
+          // Map vertical slides between -125px (back card) and -10px (front card)
+          const minY = -125;
+          const maxY = -10;
+          ty = minY + (index / (total - 1)) * (maxY - minY);
+          
+          // Map rotation and horizontal fanning out
+          const maxAngle = Math.min(10, 30 / (total - 1));
+          const maxX = Math.min(45, 95 / (total - 1));
+          const factor = (index / (total - 1)) * 2 - 1; // goes from -1 to 1
+          
+          rot = factor * maxAngle;
+          tx = factor * maxX;
+        }
+        
+        // Expand individual card higher on mouse focus
+        let scale = 1;
+        if (hoveredCardIndex === index) {
+          scale = 1.05;
+          ty -= 18;
+        }
         
         return (
           <div
             key={g.id}
             onClick={() => navigate('group-detail', g)}
-            className={`wallet-group-card card-pos-${index}`}
-            style={{ background: cardGradients[index] }}
+            onMouseEnter={() => setHoveredCardIndex(index)}
+            onMouseLeave={() => setHoveredCardIndex(null)}
+            className="wallet-group-card"
+            style={{ 
+              zIndex,
+              background: getCardGradient(index),
+              bottom: initialBottom,
+              transform: hovered
+                ? `translateY(${ty}px) translateX(${tx}px) rotate(${rot}deg) scale(${scale})`
+                : 'translateY(0) translateX(0) rotate(0) scale(1)',
+              transition: 'transform 0.45s cubic-bezier(0.25, 0.8, 0.25, 1), z-index 0.1s ease',
+            }}
           >
             <div className="card-inner">
               <div className="card-top">
