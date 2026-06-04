@@ -148,14 +148,14 @@ export default function Login({ onSwitch }) {
         .card:before, .card:after {
           content: '';
           position: absolute;
-          left: -2px;
-          top: -2px;
+          left: -1px;
+          top: -1px;
           border-radius: 27px;
           background: linear-gradient(45deg, #fb0094, #0000ff, #00ff00, #ffff00, #ff0000, #fb0094, 
             #0000ff, #00ff00, #ffff00, #ff0000);
           background-size: 400%;
-          width: calc(100% + 4px);
-          height: calc(100% + 4px);
+          width: calc(100% + 2px);
+          height: calc(100% + 2px);
           z-index: 0;
           animation: steam 20s linear infinite;
         }
@@ -182,7 +182,7 @@ export default function Login({ onSwitch }) {
           position: relative;
           z-index: 10;
           border-radius: 25px;
-          background-color: var(--bg-surface);
+          background: linear-gradient(0deg, #0b0c10, #20212b);
           transition: all 0.3s ease-in-out;
           overflow: hidden;
         }
@@ -196,9 +196,47 @@ export default function Login({ onSwitch }) {
           flex-direction: column;
           gap: 12px;
           padding: 2.5em 2em 1.5em;
-          background-color: var(--bg-surface);
+          background: transparent;
           border-radius: 25px;
           width: 100%;
+        }
+
+        /* Enforce light/white styling on dark gradient card */
+        .card #heading {
+          color: #ffffff;
+        }
+        .card .field {
+          background-color: rgba(255, 255, 255, 0.04);
+          border-color: rgba(255, 255, 255, 0.08);
+        }
+        .card .field:focus-within {
+          border-color: #6366f1;
+          background-color: rgba(255, 255, 255, 0.08);
+        }
+        .card .input-field {
+          color: #ffffff;
+        }
+        .card .floating-label {
+          color: rgba(255, 255, 255, 0.5);
+        }
+        .card .input-field:focus ~ .floating-label,
+        .card .input-field:not(:placeholder-shown) ~ .floating-label {
+          color: #818cf8;
+        }
+        .card .button2 {
+          background-color: rgba(255, 255, 255, 0.05);
+          border-color: rgba(255, 255, 255, 0.1);
+          color: rgba(255, 255, 255, 0.8);
+        }
+        .card .button2:hover {
+          background-color: rgba(255, 255, 255, 0.1);
+          color: #ffffff;
+        }
+        .card .button3 {
+          color: rgba(255, 255, 255, 0.4);
+        }
+        .card .button3:hover {
+          color: #fca5a5;
         }
 
         #heading {
