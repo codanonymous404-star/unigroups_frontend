@@ -25,6 +25,95 @@ function StatBox({ label, value, icon }) {
   )
 }
 
+// ── Interactive Subject Wallet Card ───────────────────────────────────────────
+function SubjectWallet({ subject, navigate, membersMap, deptKey }) {
+  const groups = subject.groups || []
+  
+  // High quality premium color schemes matching SE (orange) and CS (cyan/blue)
+  const cardGradients = deptKey === 'SE' 
+    ? [
+        'linear-gradient(135deg, #f97316, #ea580c)',
+        'linear-gradient(135deg, #ea580c, #c2410c)',
+        'linear-gradient(135deg, #f59e0b, #d97706)'
+      ]
+    : [
+        'linear-gradient(135deg, #06b6d4, #0891b2)',
+        'linear-gradient(135deg, #0891b2, #0e7490)',
+        'linear-gradient(135deg, #3b82f6, #2563eb)'
+      ];
+
+  const pocketColor = deptKey === 'SE' ? '#431407' : '#0f172a'; // Deep rustic dark-orange / deep slate navy
+  const pocketStroke = deptKey === 'SE' ? '#ea580c' : '#06b6d4';
+
+  return (
+    <div className="subject-wallet group">
+      {/* Wallet back panel */}
+      <div className="wallet-back-panel" />
+      
+      {/* Group cards - max 3 stacked inside the wallet */}
+      {groups.slice(0, 3).map((g, index) => {
+        const mc = membersMap[g.id]?.length || 0;
+        const max = g.max_members || 5;
+        
+        return (
+          <div
+            key={g.id}
+            onClick={() => navigate('group-detail', g)}
+            className={`wallet-group-card card-pos-${index}`}
+            style={{ background: cardGradients[index] }}
+          >
+            <div className="card-inner">
+              <div className="card-top">
+                <span className="font-bold tracking-wider text-xs truncate max-w-[140px]">{g.name}</span>
+                <div className="chip flex items-center justify-center">
+                  <Icon name={g.status === 'open' ? 'unlock' : 'lock'} size={11} className="text-white/90" />
+                </div>
+              </div>
+              <div className="card-bottom">
+                <div className="card-info">
+                  <span className="label">Members</span>
+                  <span className="value font-bold text-white">{mc} / {max}</span>
+                </div>
+                <div className="card-number-wrapper flex flex-col items-end">
+                  <span className="label">{g.my_role ? 'Role' : 'Status'}</span>
+                  <span className="value font-mono text-[10px] uppercase font-bold text-white">
+                    {g.my_role || g.status}
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+        );
+      })}
+      
+      {/* Pocket */}
+      <div className="wallet-pocket">
+        <svg className="wallet-pocket-bg" viewBox="0 0 290 160" fill="none">
+          <path
+            d="M 0 20 C 0 10, 5 10, 10 10 C 20 10, 25 25, 40 25 L 250 25 C 265 25, 270 10, 280 10 C 285 10, 290 10, 290 20 L 290 120 C 290 155, 270 160, 250 160 L 40 160 C 20 160, 0 155, 0 120 Z"
+            fill={pocketColor}
+          />
+          <path
+            d="M 8 22 C 8 16, 12 16, 15 16 C 23 16, 27 29, 40 29 L 250 29 C 263 29, 267 16, 275 16 C 278 16, 282 16, 282 22 L 282 120 C 282 150, 265 152, 250 152 L 40 152 C 25 152, 8 152, 8 120 Z"
+            stroke={pocketStroke}
+            strokeWidth="1.5"
+            strokeDasharray="6 4"
+          />
+        </svg>
+        <div className="pocket-content-overlay">
+          <p className="pocket-title" title={subject.name}>{subject.name}</p>
+          <span className="pocket-subtitle">
+            {groups.length} Group{groups.length !== 1 ? 's' : ''}
+          </span>
+          <div className="pocket-eye-icon flex items-center justify-center">
+            <Icon name="eye" size={16} className="text-white/80 transition-transform group-hover:scale-110" />
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+}
+
 // ── Subject section inside a dept ────────────────────────────────────────────
 const PREVIEW = 2
 
@@ -116,11 +205,11 @@ function DeptSection({ dept, data, navigate, membersMap }) {
         <EmptyState iconName={dept === 'SE' ? 'monitor' : 'code2'} title={`No ${cfg.label} groups`}
           action={<Button variant="outline" size="sm" onClick={() => navigate('create-group')}><Icon name="plus" size={13} /> Create one</Button>} />
       ) : bySubject.length > 0 ? (
-        // Subject-grouped view
-        <div className="space-y-3">
+        // Subject-grouped view - interactive wallets grid!
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 justify-items-center sm:justify-items-start">
           {bySubject.map((subj, i) => (
             <motion.div key={subj.id || 'general'} variants={fadeUp} custom={i}>
-              <SubjectSection subject={subj} navigate={navigate} membersMap={membersMap} deptKey={dept} />
+              <SubjectWallet subject={subj} navigate={navigate} membersMap={membersMap} deptKey={dept} />
             </motion.div>
           ))}
         </div>
