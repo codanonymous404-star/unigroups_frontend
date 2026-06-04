@@ -235,14 +235,50 @@ export default function Signup({ onSwitch }) {
 
       <style>{`
         .card {
-          background-image: linear-gradient(163deg, #6366f1 0%, #a78bfa 100%);
+          position: relative;
           border-radius: 26px;
           padding: 1px;
+          background-color: transparent;
           transition: all 0.3s ease-in-out;
           width: 100%;
         }
 
+        .card:before, .card:after {
+          content: '';
+          position: absolute;
+          left: -2px;
+          top: -2px;
+          border-radius: 27px;
+          background: linear-gradient(45deg, #fb0094, #0000ff, #00ff00, #ffff00, #ff0000, #fb0094, 
+            #0000ff, #00ff00, #ffff00, #ff0000);
+          background-size: 400%;
+          width: calc(100% + 4px);
+          height: calc(100% + 4px);
+          z-index: 0;
+          animation: steam 20s linear infinite;
+        }
+
+        @keyframes steam {
+          0% {
+            background-position: 0 0;
+          }
+          50% {
+            background-position: 400% 0;
+          }
+          100% {
+            background-position: 0 0;
+          }
+        }
+
+        .card:after {
+          filter: blur(50px);
+          opacity: 0.85;
+          z-index: -1;
+        }
+
         .card2 {
+          position: relative;
+          z-index: 10;
           border-radius: 25px;
           background-color: var(--bg-surface);
           transition: all 0.3s ease-in-out;
@@ -251,10 +287,6 @@ export default function Signup({ onSwitch }) {
 
         .card2:hover {
           transform: scale(0.99);
-        }
-
-        .card:hover {
-          box-shadow: 0px 0px 25px 2px rgba(99, 102, 241, 0.4), 0px 0px 40px 4px rgba(167, 139, 250, 0.25), 0px 0px 50px 6px rgba(56, 189, 248, 0.15);
         }
 
         .form-uiverse {
