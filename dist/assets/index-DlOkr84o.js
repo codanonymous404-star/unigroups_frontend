@@ -33,17 +33,17 @@ Error generating stack: `+e.message+`
           transition: all 0.3s ease-in-out;
         }
 
-        .card:before, .card:after {
+        .card:before {
           content: '';
           position: absolute;
-          left: -1px;
-          top: -1px;
+          left: -0.75px;
+          top: -0.75px;
           border-radius: 27px;
           background: linear-gradient(45deg, #fb0094, #0000ff, #00ff00, #ffff00, #ff0000, #fb0094, 
             #0000ff, #00ff00, #ffff00, #ff0000);
           background-size: 400%;
-          width: calc(100% + 2px);
-          height: calc(100% + 2px);
+          width: calc(100% + 1.5px);
+          height: calc(100% + 1.5px);
           z-index: 0;
           animation: steam 20s linear infinite;
         }
@@ -61,9 +61,20 @@ Error generating stack: `+e.message+`
         }
 
         .card:after {
-          filter: blur(50px);
-          opacity: 0.85;
+          content: '';
+          position: absolute;
+          left: -4px;
+          top: -4px;
+          border-radius: 30px;
+          background: linear-gradient(45deg, #fb0094, #0000ff, #00ff00, #ffff00, #ff0000, #fb0094, 
+            #0000ff, #00ff00, #ffff00, #ff0000);
+          background-size: 400%;
+          width: calc(100% + 8px);
+          height: calc(100% + 8px);
           z-index: -1;
+          filter: blur(100px);
+          opacity: 0.95;
+          animation: steam 20s linear infinite;
         }
 
         .card2 {
@@ -277,17 +288,17 @@ Error generating stack: `+e.message+`
           width: 100%;
         }
 
-        .card:before, .card:after {
+        .card:before {
           content: '';
           position: absolute;
-          left: -1px;
-          top: -1px;
+          left: -0.75px;
+          top: -0.75px;
           border-radius: 27px;
           background: linear-gradient(45deg, #fb0094, #0000ff, #00ff00, #ffff00, #ff0000, #fb0094, 
             #0000ff, #00ff00, #ffff00, #ff0000);
           background-size: 400%;
-          width: calc(100% + 2px);
-          height: calc(100% + 2px);
+          width: calc(100% + 1.5px);
+          height: calc(100% + 1.5px);
           z-index: 0;
           animation: steam 20s linear infinite;
         }
@@ -305,9 +316,20 @@ Error generating stack: `+e.message+`
         }
 
         .card:after {
-          filter: blur(50px);
-          opacity: 0.85;
+          content: '';
+          position: absolute;
+          left: -4px;
+          top: -4px;
+          border-radius: 30px;
+          background: linear-gradient(45deg, #fb0094, #0000ff, #00ff00, #ffff00, #ff0000, #fb0094, 
+            #0000ff, #00ff00, #ffff00, #ff0000);
+          background-size: 400%;
+          width: calc(100% + 8px);
+          height: calc(100% + 8px);
           z-index: -1;
+          filter: blur(100px);
+          opacity: 0.95;
+          animation: steam 20s linear infinite;
         }
 
         .card2 {
