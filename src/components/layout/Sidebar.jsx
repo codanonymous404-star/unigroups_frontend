@@ -81,8 +81,8 @@ export default function Sidebar({ open, setOpen }) {
   return (
     <>
       <aside
-        className="fixed top-16 left-0 bottom-0 z-40 w-64 hidden lg:flex flex-col"
-        style={{ background: 'var(--bg-surface)', borderRight: '1px solid var(--border)' }}>
+        className="fixed top-20 left-4 bottom-4 z-40 w-56 hidden lg:flex flex-col rounded-3xl border border-[var(--border)] shadow-xl overflow-hidden"
+        style={{ background: 'var(--bg-surface)' }}>
 
         <div className="absolute top-0 left-0 right-0 h-32 pointer-events-none"
           style={{ background: 'radial-gradient(ellipse at 50% 0%, rgba(99,102,241,0.06), transparent 70%)' }} />

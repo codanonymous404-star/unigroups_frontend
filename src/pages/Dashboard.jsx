@@ -16,17 +16,66 @@ const DEPT = {
 }
 
 function StatBox({ label, value, icon, gradient }) {
+  const x = useMotionValue(0)
+  const y = useMotionValue(0)
+
+  const rotateX = useTransform(y, [-60, 60], [8, -8])
+  const rotateY = useTransform(x, [-100, 100], [-8, 8])
+
+  function handleMouseMove(event) {
+    const rect = event.currentTarget.getBoundingClientRect()
+    const mouseX = event.clientX - rect.left - rect.width / 2
+    const mouseY = event.clientY - rect.top - rect.height / 2
+    x.set(mouseX)
+    y.set(mouseY)
+  }
+
+  function handleMouseLeave() {
+    x.set(0)
+    y.set(0)
+  }
+
   return (
-    <motion.div variants={fadeUp} 
-      className="border-0 rounded-2xl p-4 flex flex-col justify-between h-24 text-white shadow-md"
-      style={{ background: gradient }}
-    >
-      <div className="text-white/80"><Icon name={icon} size={18} /></div>
-      <div>
-        <p className="text-2xl font-extrabold leading-none">{value}</p>
-        <p className="text-[10px] font-bold text-white/90 mt-1 truncate">{label}</p>
-      </div>
-    </motion.div>
+    <div style={{ perspective: 800 }}>
+      <motion.div
+        variants={fadeUp}
+        onMouseMove={handleMouseMove}
+        onMouseLeave={handleMouseLeave}
+        whileHover={{
+          y: -4,
+          scale: 1.02,
+          boxShadow: '0 15px 30px rgba(0, 0, 0, 0.2)'
+        }}
+        style={{
+          background: gradient,
+          rotateX,
+          rotateY,
+          transformStyle: 'preserve-3d',
+          boxShadow: 'inset 4px 4px 8px rgba(0, 0, 0, 0.3), inset -4px -4px 8px rgba(255, 255, 255, 0.15)',
+          willChange: 'transform'
+        }}
+        className="rounded-2xl p-4 flex flex-col justify-between h-24 text-white relative overflow-hidden select-none transition-all duration-200"
+      >
+        {/* Shine glare */}
+        <motion.div
+          className="absolute inset-0 pointer-events-none transition-opacity duration-300 opacity-0 hover:opacity-100"
+          style={{
+            background: `radial-gradient(circle 80px at ${useTransform(x, val => val + 100)}px ${useTransform(y, val => val + 50)}px, rgba(255,255,255,0.15), transparent)`
+          }}
+        />
+
+        {/* 3D content layering */}
+        <div style={{ transform: 'translateZ(20px)', transformStyle: 'preserve-3d' }} className="flex flex-col justify-between h-full w-full">
+          <div className="text-white/80" style={{ transform: 'translateZ(15px)' }}>
+            <Icon name={icon} size={18} />
+          </div>
+          <div style={{ transform: 'translateZ(10px)' }}>
+            <p className="text-2xl font-extrabold leading-none">{value}</p>
+            <p className="text-[10px] font-bold text-white/90 mt-1 truncate">{label}</p>
+          </div>
+        </div>
+      </motion.div>
+    </div>
   )
 }
 
