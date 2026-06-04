@@ -80,18 +80,8 @@ export default function Sidebar({ open, setOpen }) {
 
   return (
     <>
-      <AnimatePresence>
-        {open && (
-          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-            transition={{ duration: 0.2 }}
-            className="fixed inset-0 z-40 lg:hidden"
-            style={{ background: 'rgba(0,0,0,0.5)', backdropFilter: 'blur(4px)' }}
-            onClick={() => setOpen(false)} />
-        )}
-      </AnimatePresence>
-
       <aside
-        className={`fixed top-16 left-0 bottom-0 z-40 w-64 flex flex-col transition-transform duration-300 ${open ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}`}
+        className="fixed top-16 left-0 bottom-0 z-40 w-64 hidden lg:flex flex-col"
         style={{ background: 'var(--bg-surface)', borderRight: '1px solid var(--border)' }}>
 
         <div className="absolute top-0 left-0 right-0 h-32 pointer-events-none"

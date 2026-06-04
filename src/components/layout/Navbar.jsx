@@ -1,4 +1,4 @@
-import { motion } from 'framer-motion'
+import { motion, AnimatePresence } from 'framer-motion'
 import Icon from '../ui/Icons.jsx'
 import { useAuth } from '../../context/AuthContext.jsx'
 import { useApp }  from '../../context/AppContext.jsx'
@@ -7,9 +7,24 @@ import Badge       from '../ui/Badge.jsx'
 import NotificationBell from '../ui/NotificationBell.jsx'
 import { spring, springSnappy, springSmooth, springBouncy, springInstant } from '../../utils/animations.js'
 
-export default function Navbar({ onMenuToggle }) {
+const NAV = [
+  { id: 'dashboard',        label: 'Dashboard',     icon: 'dashboard' },
+  { id: 'create-group',     label: 'Create Group',  icon: 'plus'      },
+  { id: 'browse-groups',    label: 'Browse Groups', icon: 'search'    },
+  { id: 'my-groups',        label: 'My Groups',     icon: 'users'     },
+  { id: 'account-settings', label: 'Settings',      icon: 'settings'  },
+]
+
+const ADMIN_NAV = [
+  { id: 'admin-groups',   label: 'All Groups',      icon: 'layers'      },
+  { id: 'admin-users',    label: 'Manage Students', icon: 'shieldCheck' },
+  { id: 'admin-subjects', label: 'Subjects',        icon: 'bookOpen'    },
+]
+
+export default function Navbar({ menuOpen, onMenuToggle, setMenuOpen }) {
   const { user, logout, isAdmin } = useAuth()
-  const { dark, toggleDark }      = useApp()
+  const { dark, toggleDark, currentPage, navigate } = useApp()
+  
   return (
     <motion.header
       initial={{ y:-64, opacity:0 }}
@@ -27,7 +42,7 @@ export default function Navbar({ onMenuToggle }) {
       }}>
       <motion.button onClick={onMenuToggle} whileTap={{scale:0.88}} whileHover={{scale:1.05}}
         className="lg:hidden p-2 rounded-xl text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-raised)] transition-colors">
-        <Icon name="menu" size={20}/>
+        <Icon name={menuOpen ? 'x' : 'menu'} size={20}/>
       </motion.button>
 
       <motion.div className="flex items-center gap-2.5 mr-auto"
@@ -72,6 +87,90 @@ export default function Navbar({ onMenuToggle }) {
           <Icon name="logout" size={17}/>
         </motion.button>
       </motion.div>
+
+      {/* Mobile Animated Dropdown Menu */}
+      <AnimatePresence>
+        {menuOpen && (
+          <motion.div
+            initial={{ opacity: 0, y: -15, height: 0 }}
+            animate={{ opacity: 1, y: 0, height: 'auto' }}
+            exit={{ opacity: 0, y: -15, height: 0 }}
+            transition={springSmooth}
+            className="absolute top-16 left-0 right-0 z-40 bg-[var(--bg-surface)] border-b border-[var(--border)] shadow-xl overflow-hidden lg:hidden"
+            style={{ 
+              backdropFilter: 'blur(20px)',
+              background: dark ? 'rgba(15,15,18,0.95)' : 'rgba(255,255,255,0.95)'
+            }}
+          >
+            <div className="p-4 space-y-4 max-h-[75vh] overflow-y-auto">
+              {/* User quick profile */}
+              <div className="flex items-center gap-3 p-3 rounded-xl bg-[var(--bg-raised)] border border-[var(--border)]">
+                <Avatar initials={user?.name?.slice(0, 2)} dept={user?.department} size="sm" />
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-bold text-[var(--text-primary)] truncate">{user?.name}</p>
+                  <p className="text-xs font-mono text-indigo-600 dark:text-indigo-400 tracking-wide truncate">{user?.roll_number}</p>
+                </div>
+              </div>
+
+              {/* Navigation Links */}
+              <div className="space-y-1">
+                <p className="px-3 mb-2 text-[10px] font-bold uppercase tracking-widest text-[var(--text-faint)]">Navigation</p>
+                <div className="grid grid-cols-2 gap-2">
+                  {NAV.map((item) => {
+                    const active = currentPage === item.id;
+                    return (
+                      <button
+                        key={item.id}
+                        onClick={() => {
+                          navigate(item.id);
+                          setMenuOpen(false);
+                        }}
+                        className={`flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-xs font-bold border transition-all ${
+                          active
+                            ? 'bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 border-indigo-100 dark:border-indigo-500/20'
+                            : 'bg-transparent text-[var(--text-secondary)] border-transparent hover:bg-[var(--bg-raised)]'
+                        }`}
+                      >
+                        <Icon name={item.icon} size={14} className={active ? 'text-indigo-600 dark:text-indigo-400' : 'text-[var(--text-muted)]'} />
+                        {item.label}
+                      </button>
+                    )
+                  })}
+                </div>
+              </div>
+
+              {/* Admin Section (If admin) */}
+              {isAdmin && (
+                <div className="space-y-1 pt-3 border-t border-[var(--border)]">
+                  <p className="px-3 mb-2 text-[10px] font-bold uppercase tracking-widest text-[var(--text-faint)]">Admin Actions</p>
+                  <div className="grid grid-cols-2 gap-2">
+                    {ADMIN_NAV.map((item) => {
+                      const active = currentPage === item.id;
+                      return (
+                        <button
+                          key={item.id}
+                          onClick={() => {
+                            navigate(item.id);
+                            setMenuOpen(false);
+                          }}
+                          className={`flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-xs font-bold border transition-all ${
+                            active
+                              ? 'bg-red-50 dark:bg-red-500/10 text-red-600 dark:text-red-400 border-red-100 dark:border-red-500/20'
+                              : 'bg-transparent text-[var(--text-secondary)] border-transparent hover:bg-[var(--bg-raised)]'
+                          }`}
+                        >
+                          <Icon name={item.icon} size={14} className={active ? 'text-red-600 dark:text-red-400' : 'text-[var(--text-muted)]'} />
+                          {item.label}
+                        </button>
+                      )
+                    })}
+                  </div>
+                </div>
+              )}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </motion.header>
   )
 }

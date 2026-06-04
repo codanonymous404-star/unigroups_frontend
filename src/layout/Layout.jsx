@@ -15,7 +15,7 @@ export default function Layout({ children }) {
   const { currentPage } = useApp()
   return (
     <div className="min-h-screen" style={{ background: 'var(--bg-base)', color: 'var(--text-primary)' }}>
-      <Navbar onMenuToggle={() => setOpen(p=>!p)}/>
+      <Navbar menuOpen={open} onMenuToggle={() => setOpen(p=>!p)} setMenuOpen={setOpen}/>
       <Sidebar open={open} setOpen={setOpen}/>
       <main className="lg:pl-64 pt-16 min-h-screen">
         <AnimatePresence mode="wait">
