@@ -58,8 +58,8 @@ function Loading() {
       <motion.p
         animate={{ opacity: [0.5, 1, 0.5] }}
         transition={{ repeat: Infinity, duration: 1.5 }}
-        className="text-xs text-[var(--text-muted)]">
-        Connecting…
+        className="text-xs text-[var(--text-muted)] font-mono tracking-wider">
+        ownerofdarkweb
       </motion.p>
     </motion.div>
   )
