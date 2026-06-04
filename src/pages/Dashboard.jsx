@@ -31,20 +31,44 @@ function SubjectWallet({ subject, navigate, membersMap, deptKey }) {
   const [hovered, setHovered] = useState(false)
   const [hoveredCardIndex, setHoveredCardIndex] = useState(null)
   
-  // Modulo generator for premium colors matching SE (orange) and CS (cyan/blue)
+  // Modulo generator for 16+ colorful premium card gradients matching SE and CS
   const getCardGradient = (index) => {
     const gradients = deptKey === 'SE' 
       ? [
-          'linear-gradient(135deg, #f97316, #ea580c)',
-          'linear-gradient(135deg, #ea580c, #c2410c)',
-          'linear-gradient(135deg, #f59e0b, #d97706)',
-          'linear-gradient(135deg, #b45309, #78350f)'
+          'linear-gradient(135deg, #f97316, #ea580c)', // Orange Red
+          'linear-gradient(135deg, #f59e0b, #d97706)', // Amber Gold
+          'linear-gradient(135deg, #ef4444, #b91c1c)', // Red Ruby
+          'linear-gradient(135deg, #ec4899, #be185d)', // Pink Rose
+          'linear-gradient(135deg, #8b5cf6, #6d28d9)', // Purple Violet
+          'linear-gradient(135deg, #e11d48, #9f1239)', // Rose Crimson
+          'linear-gradient(135deg, #f97316, #b45309)', // Bright Amber
+          'linear-gradient(135deg, #f43f5e, #be123c)', // Coral Sunset
+          'linear-gradient(135deg, #d946ef, #a21caf)', // Fuchsia Magenta
+          'linear-gradient(135deg, #ff7e5f, #feb47b)', // Pastel Coral
+          'linear-gradient(135deg, #ff9966, #ff5e62)', // Peach Passion
+          'linear-gradient(135deg, #e52d27, #b31217)', // Crimson Fire
+          'linear-gradient(135deg, #f12711, #f5af19)', // Sunburst Gold
+          'linear-gradient(135deg, #ff0844, #ffb199)', // Velvet Red
+          'linear-gradient(135deg, #f857a6, #ff5858)', // Candy Salmon
+          'linear-gradient(135deg, #ff4e50, #f9d423)'  // Sherbet Sun
         ]
       : [
-          'linear-gradient(135deg, #06b6d4, #0891b2)',
-          'linear-gradient(135deg, #0891b2, #0e7490)',
-          'linear-gradient(135deg, #3b82f6, #2563eb)',
-          'linear-gradient(135deg, #1d4ed8, #1e3a8a)'
+          'linear-gradient(135deg, #06b6d4, #0891b2)', // Cyan Teal
+          'linear-gradient(135deg, #3b82f6, #1d4ed8)', // Deep Cobalt
+          'linear-gradient(135deg, #10b981, #047857)', // Emerald Wave
+          'linear-gradient(135deg, #6366f1, #4338ca)', // Indigo Royal
+          'linear-gradient(135deg, #14b8a6, #0f766e)', // Teal Sea
+          'linear-gradient(135deg, #3a7bd5, #3a6073)', // Steel Slate
+          'linear-gradient(135deg, #00c6ff, #0072ff)', // Neon Electric
+          'linear-gradient(135deg, #02aab0, #00cdac)', // Mint Breeze
+          'linear-gradient(135deg, #4facfe, #00f2fe)', // Sky Lagoon
+          'linear-gradient(135deg, #43e97b, #38f9d7)', // Lime Cyan
+          'linear-gradient(135deg, #1e3c72, #2a5298)', // Navy Steel
+          'linear-gradient(135deg, #2b5876, #4e4376)', // Charcoal Violet
+          'linear-gradient(135deg, #11998e, #38ef7d)', // Aurora Green
+          'linear-gradient(135deg, #0575e6, #00f260)', // Cyber Lime Blue
+          'linear-gradient(135deg, #182848, #4b6cb7)', // Deep Space Navy
+          'linear-gradient(135deg, #2193b0, #6dd5ed)'  // Ice Blue Cyan
         ];
     return gradients[index % gradients.length];
   };
