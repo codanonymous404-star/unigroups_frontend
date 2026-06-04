@@ -69,11 +69,14 @@ function SubjectWallet({ subject, navigate, membersMap, deptKey }) {
         const max = g.max_members || 5;
         
         const total = groups.length;
-        const zIndex = hoveredCardIndex === index ? 100 : (10 + index);
         
-        // 1. Initial stacked layout bottom positioning
+        // Invert slot index so Group 1 (index 0) sits at the very front
+        const slotIndex = total - 1 - index;
+        const zIndex = hoveredCardIndex === index ? 100 : (10 + slotIndex);
+        
+        // 1. Initial stacked layout bottom positioning (Group 1 is lowest at bottom 35px)
         const step = total > 1 ? Math.min(22, 55 / (total - 1)) : 0;
-        const initialBottom = 35 + (total - 1 - index) * step;
+        const initialBottom = 35 + index * step;
         
         // 2. Staggered dynamic fan values on hover
         let ty = 0;
@@ -83,21 +86,21 @@ function SubjectWallet({ subject, navigate, membersMap, deptKey }) {
         if (total === 1) {
           ty = -90; // single card slides out fully to be visible
         } else {
-          // Map vertical slides between -125px (back card) and -10px (front card)
+          // Map vertical slides: Group 1 (front) goes to -10px, back-most goes to -125px
           const minY = -125;
           const maxY = -10;
-          ty = minY + (index / (total - 1)) * (maxY - minY);
+          ty = minY + (slotIndex / (total - 1)) * (maxY - minY);
           
           // Map rotation and horizontal fanning out
           const maxAngle = Math.min(10, 30 / (total - 1));
           const maxX = Math.min(45, 95 / (total - 1));
-          const factor = (index / (total - 1)) * 2 - 1; // goes from -1 to 1
+          const factor = (slotIndex / (total - 1)) * 2 - 1; // goes from -1 to 1
           
           rot = factor * maxAngle;
           tx = factor * maxX;
         }
         
-        // Expand individual card higher on mouse focus
+        // Expand individual card higher on mouse focus / tap highlight
         let scale = 1;
         if (hoveredCardIndex === index) {
           scale = 1.05;
@@ -110,6 +113,10 @@ function SubjectWallet({ subject, navigate, membersMap, deptKey }) {
             onClick={() => navigate('group-detail', g)}
             onMouseEnter={() => setHoveredCardIndex(index)}
             onMouseLeave={() => setHoveredCardIndex(null)}
+            onTouchStart={(e) => {
+              e.stopPropagation();
+              setHoveredCardIndex(index);
+            }}
             className="wallet-group-card"
             style={{ 
               zIndex,
