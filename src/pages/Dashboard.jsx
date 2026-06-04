@@ -55,12 +55,15 @@ function SubjectWallet({ subject, navigate, membersMap, deptKey }) {
         const mc = membersMap[g.id]?.length || 0;
         const max = g.max_members || 5;
         
+        // Dynamically shift card slots so they always stack overlapping behind each other
+        const posIndex = groups.length === 1 ? 2 : (groups.length === 2 ? index + 1 : index);
+        
         return (
           <div
             key={g.id}
             onClick={() => navigate('group-detail', g)}
-            className={`wallet-group-card card-pos-${index}`}
-            style={{ background: cardGradients[index] }}
+            className={`wallet-group-card card-pos-${posIndex}`}
+            style={{ background: cardGradients[posIndex] }}
           >
             <div className="card-inner">
               <div className="card-top">
