@@ -17,13 +17,11 @@ const DEPT = {
 
 function StatBox({ label, value, icon }) {
   return (
-    <motion.div variants={fadeUp} className="bg-[var(--bg-surface)] border border-[var(--border)] rounded-xl p-3 flex items-center gap-3">
-      <div className="text-indigo-600 dark:text-indigo-400 p-1.5 rounded-lg bg-[var(--bg-raised)] shrink-0">
-        <Icon name={icon} size={15} />
-      </div>
-      <div className="min-w-0">
-        <p className="text-lg font-extrabold text-[var(--text-primary)] leading-tight">{value}</p>
-        <p className="text-[10px] font-bold text-[var(--text-muted)] mt-0.5 truncate">{label}</p>
+    <motion.div variants={fadeUp} className="bg-[var(--bg-surface)] border border-[var(--border)] rounded-2xl p-4 flex flex-col justify-between h-24">
+      <div className="text-indigo-600 dark:text-indigo-400"><Icon name={icon} size={18} /></div>
+      <div>
+        <p className="text-2xl font-bold text-[var(--text-primary)] leading-none">{value}</p>
+        <p className="text-[10px] font-semibold text-[var(--text-muted)] mt-1 truncate">{label}</p>
       </div>
     </motion.div>
   )
@@ -468,25 +466,24 @@ export default function Dashboard() {
             <p className="text-xs font-semibold text-[var(--text-muted)] uppercase tracking-widest mb-3">Quick Actions</p>
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
               {[
-                { icon: 'plus',   label: 'Create Group',  desc: 'Start a new team',       page: 'create-group'  },
-                { icon: 'search', label: 'Browse Groups', desc: 'Find groups to join',     page: 'browse-groups' },
-                { icon: 'users',  label: 'My Groups',     desc: 'View your memberships',   page: 'my-groups'     },
+                { icon: 'plus',   label: 'Create Group',  desc: 'Start a new team',       page: 'create-group',    gradient: 'linear-gradient(135deg, #f97316, #ea580c)' },
+                { icon: 'search', label: 'Browse Groups', desc: 'Find groups to join',     page: 'browse-groups',   gradient: 'linear-gradient(135deg, #06b6d4, #0891b2)' },
+                { icon: 'users',  label: 'My Groups',     desc: 'View your memberships',   page: 'my-groups',       gradient: 'linear-gradient(135deg, #6366f1, #4f46e5)' },
               ].map(a => (
                 <motion.button key={a.page} onClick={() => navigate(a.page)}
-                  whileHover={{ x: 4, scale: 1.01, borderColor: 'rgba(99,102,241,0.4)', boxShadow: '0 8px 30px rgba(99,102,241,0.08)', transition: { type: 'spring', stiffness: 500, damping: 28 } }}
-                  whileTap={{ scale: 0.97, transition: { type: 'spring', stiffness: 600, damping: 30 } }}
-                  className="flex items-center gap-4 p-4 rounded-2xl bg-[var(--bg-surface)] border border-[var(--border)] transition-colors group text-left">
-                  <motion.div whileHover={{ scale: 1.12, rotate: [-3, 3, -3, 0], transition: { duration: 0.3 } }}
-                    className="w-11 h-11 rounded-xl bg-[var(--bg-raised)] group-hover:bg-indigo-500/10 flex items-center justify-center text-indigo-600 dark:text-indigo-400 shrink-0 transition-colors">
+                  whileHover={{ y: -4, scale: 1.02, boxShadow: '0 12px 30px rgba(99,102,241,0.15)' }}
+                  whileTap={{ scale: 0.98 }}
+                  className="flex items-center gap-4 p-4 rounded-2xl border-0 text-left relative overflow-hidden text-white shadow-md cursor-pointer transition-all"
+                  style={{ background: a.gradient }}
+                >
+                  <div className="w-11 h-11 rounded-xl bg-white/15 flex items-center justify-center text-white shrink-0 border border-white/10">
                     <Icon name={a.icon} size={18} />
-                  </motion.div>
-                  <div className="flex-1">
-                    <p className="font-semibold text-sm text-[var(--text-primary)] group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">{a.label}</p>
-                    <p className="text-xs text-[var(--text-muted)] mt-0.5">{a.desc}</p>
                   </div>
-                  <motion.div whileHover={{ x: 3 }} transition={{ type: 'spring', stiffness: 500 }}>
-                    <Icon name="arrowRight" size={15} className="text-[var(--text-faint)] group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors shrink-0" />
-                  </motion.div>
+                  <div className="flex-1 min-w-0">
+                    <p className="font-extrabold text-sm tracking-wide">{a.label}</p>
+                    <p className="text-xs text-white/80 mt-0.5 truncate">{a.desc}</p>
+                  </div>
+                  <Icon name="arrowRight" size={15} className="text-white/70 shrink-0" />
                 </motion.button>
               ))}
             </div>

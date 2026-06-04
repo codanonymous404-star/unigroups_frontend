@@ -196,16 +196,6 @@ function ProfileInfoSection({ user }) {
                     Unverified
                   </span>
               }
-              <button 
-                onClick={() => {
-                  const newVal = localStorage.getItem('use_hijab_avatar') !== 'true';
-                  localStorage.setItem('use_hijab_avatar', String(newVal));
-                  window.location.reload();
-                }}
-                className="inline-flex items-center gap-1 text-[10px] font-semibold text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-400/10 px-2 py-0.5 rounded-full hover:bg-indigo-100 dark:hover:bg-indigo-400/20 active:scale-95 transition-all"
-              >
-                <Icon name="user" size={9} /> {localStorage.getItem('use_hijab_avatar') === 'true' ? 'Use Initials' : 'Use Burqa Avatar'}
-              </button>
               {user?.role === 'admin' &&
                 <span className="inline-flex items-center gap-1 text-[10px] font-semibold text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-400/10 px-2 py-0.5 rounded-full">
                   <Icon name="shieldCheck" size={9} /> Admin
