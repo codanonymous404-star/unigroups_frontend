@@ -56,15 +56,12 @@ function SubjectWallet({ subject, navigate, membersMap, deptKey }) {
         const mc = groupMembers.length || g.member_count || 0;
         const max = g.max_members || 5;
         
-        // Dynamically shift card slots so they always stack overlapping behind each other
-        const posIndex = groups.length === 1 ? 2 : (groups.length === 2 ? index + 1 : index);
-        
         return (
           <div
             key={g.id}
             onClick={() => navigate('group-detail', g)}
-            className={`wallet-group-card card-pos-${posIndex}`}
-            style={{ background: cardGradients[posIndex] }}
+            className={`wallet-group-card card-pos-${index}`}
+            style={{ background: cardGradients[index] }}
           >
             <div className="card-inner">
               <div className="card-top">
@@ -74,9 +71,9 @@ function SubjectWallet({ subject, navigate, membersMap, deptKey }) {
                 </div>
               </div>
               
-              {/* Member names list */}
+              {/* Member names list - showing all members without slice */}
               <div className="my-1 flex flex-wrap gap-1 items-center max-h-[38px] overflow-hidden">
-                {groupMembers.slice(0, 3).map((m, i) => {
+                {groupMembers.map((m, i) => {
                   const u = m.user || m;
                   return (
                     <span key={u?.id || i} className="text-[8px] font-semibold px-1 py-0.5 rounded bg-white/20 text-white truncate max-w-[70px]">
@@ -84,9 +81,6 @@ function SubjectWallet({ subject, navigate, membersMap, deptKey }) {
                     </span>
                   )
                 })}
-                {groupMembers.length > 3 && (
-                  <span className="text-[8px] font-bold text-white/80">+{groupMembers.length - 3}</span>
-                )}
               </div>
 
               <div className="card-bottom">
