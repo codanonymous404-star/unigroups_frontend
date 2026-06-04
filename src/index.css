@@ -226,33 +226,34 @@ body::before {
   opacity: 1;
 }
 
+/* Fan out cards left, center, and right to completely resolve overlap blocking */
 .subject-wallet:hover .wallet-group-card.card-pos-0 {
-  transform: translateY(-130px) rotate(-3deg);
+  transform: translateY(-120px) translateX(-35px) rotate(-6deg);
 }
 
 .subject-wallet:hover .wallet-group-card.card-pos-1 {
-  transform: translateY(-70px) rotate(2deg);
+  transform: translateY(-70px) translateX(0) rotate(2deg);
 }
 
 .subject-wallet:hover .wallet-group-card.card-pos-2 {
-  transform: translateY(-10px);
+  transform: translateY(-10px) translateX(35px) rotate(6deg);
 }
 
-/* Individual card hover focus based on their position to prevent collision */
+/* Individual card hover focus with horizontal offset preservation */
 .subject-wallet:hover .wallet-group-card.card-pos-0:hover {
   z-index: 100 !important;
-  transform: translateY(-145px) scale(1.04) rotate(0deg) !important;
+  transform: translateY(-135px) translateX(-40px) scale(1.05) rotate(0deg) !important;
   box-shadow: 0 12px 25px rgba(0,0,0,0.35);
 }
 
 .subject-wallet:hover .wallet-group-card.card-pos-1:hover {
   z-index: 100 !important;
-  transform: translateY(-85px) scale(1.04) rotate(0deg) !important;
+  transform: translateY(-85px) translateX(0) scale(1.05) rotate(0deg) !important;
   box-shadow: 0 12px 25px rgba(0,0,0,0.35);
 }
 
 .subject-wallet:hover .wallet-group-card.card-pos-2:hover {
   z-index: 100 !important;
-  transform: translateY(-25px) scale(1.04) rotate(0deg) !important;
+  transform: translateY(-25px) translateX(40px) scale(1.05) rotate(0deg) !important;
   box-shadow: 0 12px 25px rgba(0,0,0,0.35);
 }
