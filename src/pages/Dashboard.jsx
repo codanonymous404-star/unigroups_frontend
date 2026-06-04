@@ -1,4 +1,4 @@
-import { motion, AnimatePresence } from 'framer-motion'
+import { motion, AnimatePresence, useMotionValue, useTransform } from 'framer-motion'
 import Icon from '../components/ui/Icons.jsx'
 import { useEffect, useState } from 'react'
 import { useAuth }   from '../context/AuthContext.jsx'
@@ -379,6 +379,90 @@ function DeptSection({ dept, data, navigate, membersMap }) {
   )
 }
 
+// ── QuickActionCard (3D Cursor-tracking card) ───────────────────────────────────
+function QuickActionCard({ a, idx, navigate }) {
+  const x = useMotionValue(0)
+  const y = useMotionValue(0)
+
+  // Map mouse positions to degrees of rotation.
+  const rotateX = useTransform(y, [-80, 80], [10, -10])
+  const rotateY = useTransform(x, [-150, 150], [-10, 10])
+
+  function handleMouseMove(event) {
+    const rect = event.currentTarget.getBoundingClientRect()
+    // Calculate relative mouse position from the center of the card
+    const mouseX = event.clientX - rect.left - rect.width / 2
+    const mouseY = event.clientY - rect.top - rect.height / 2
+    x.set(mouseX)
+    y.set(mouseY)
+  }
+
+  function handleMouseLeave() {
+    x.set(0)
+    y.set(0)
+  }
+
+  return (
+    <div style={{ perspective: 1000 }} className={idx === 2 ? 'col-span-2 md:col-span-1' : ''}>
+      <motion.button
+        onClick={() => navigate(a.page)}
+        onMouseMove={handleMouseMove}
+        onMouseLeave={handleMouseLeave}
+        whileHover={{
+          y: -6,
+          scale: 1.02,
+          boxShadow: '0 20px 40px rgba(0, 0, 0, 0.22)'
+        }}
+        whileTap={{ scale: 0.97 }}
+        style={{
+          background: a.gradient,
+          rotateX,
+          rotateY,
+          transformStyle: 'preserve-3d',
+          width: '100%',
+          willChange: 'transform'
+        }}
+        className="flex items-center gap-4 p-5 rounded-2xl border-0 text-left relative overflow-hidden text-white shadow-md cursor-pointer transition-all duration-200"
+      >
+        {/* Shine/Glare reflection overlay */}
+        <motion.div
+          className="absolute inset-0 pointer-events-none transition-opacity duration-300 opacity-0 hover:opacity-100"
+          style={{
+            background: `radial-gradient(circle 120px at ${useTransform(x, val => val + 150)}px ${useTransform(y, val => val + 50)}px, rgba(255,255,255,0.18), transparent)`
+          }}
+        />
+
+        {/* Outer shine ring on border */}
+        <div className="absolute inset-0 rounded-2xl border border-white/10 pointer-events-none" />
+
+        {/* 3D Content Layers */}
+        <div style={{ transform: 'translateZ(40px)', transformStyle: 'preserve-3d' }} className="w-full flex items-center justify-between gap-4">
+          <div className="flex items-center gap-4 flex-1 min-w-0">
+            {/* Icon nested deeper in 3D */}
+            <div
+              style={{ transform: 'translateZ(30px)' }}
+              className="w-12 h-12 rounded-xl bg-white/20 flex items-center justify-center text-white shrink-0 border border-white/20 shadow-inner"
+            >
+              <Icon name={a.icon} size={20} />
+            </div>
+            
+            {/* Text details */}
+            <div style={{ transform: 'translateZ(20px)' }} className="flex-1 min-w-0">
+              <p className="font-extrabold text-sm tracking-wide">{a.label}</p>
+              <p className="text-xs text-white/85 mt-0.5 truncate">{a.desc}</p>
+            </div>
+          </div>
+          
+          {/* Arrow icon */}
+          <div style={{ transform: 'translateZ(25px)' }}>
+            <Icon name="arrowRight" size={16} className="text-white/80 shrink-0" />
+          </div>
+        </div>
+      </motion.button>
+    </div>
+  )
+}
+
 // ── Main Dashboard ────────────────────────────────────────────────────────────
 export default function Dashboard() {
   const { user }             = useAuth()
@@ -473,23 +557,7 @@ export default function Dashboard() {
                 { icon: 'search', label: 'Browse Groups', desc: 'Find groups to join',     page: 'browse-groups',   gradient: 'linear-gradient(135deg, #06b6d4, #0891b2)' },
                 { icon: 'users',  label: 'My Groups',     desc: 'View your memberships',   page: 'my-groups',       gradient: 'linear-gradient(135deg, #6366f1, #4f46e5)' },
               ].map((a, idx) => (
-                <motion.button key={a.page} onClick={() => navigate(a.page)}
-                  whileHover={{ y: -4, scale: 1.01, boxShadow: '0 12px 30px rgba(99,102,241,0.15)' }}
-                  whileTap={{ scale: 0.98 }}
-                  className={`flex items-center gap-4 p-4 rounded-2xl border-0 text-left relative overflow-hidden text-white shadow-md cursor-pointer transition-all ${
-                    idx === 2 ? 'col-span-2 md:col-span-1' : ''
-                  }`}
-                  style={{ background: a.gradient }}
-                >
-                  <div className="w-11 h-11 rounded-xl bg-white/15 flex items-center justify-center text-white shrink-0 border border-white/10">
-                    <Icon name={a.icon} size={18} />
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <p className="font-extrabold text-sm tracking-wide">{a.label}</p>
-                    <p className="text-xs text-white/80 mt-0.5 truncate">{a.desc}</p>
-                  </div>
-                  <Icon name="arrowRight" size={15} className="text-white/70 shrink-0" />
-                </motion.button>
+                <QuickActionCard key={a.page} a={a} idx={idx} navigate={navigate} />
               ))}
             </div>
           </motion.div>
