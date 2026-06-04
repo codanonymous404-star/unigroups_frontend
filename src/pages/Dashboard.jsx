@@ -15,13 +15,16 @@ const DEPT = {
   CS: { label: 'Computer Science',     bar: 'bg-cyan-400',   badge: 'cs', color: 'text-cyan-500 dark:text-cyan-400',     glow: 'rgba(6,182,212,0.06)'  },
 }
 
-function StatBox({ label, value, icon }) {
+function StatBox({ label, value, icon, gradient }) {
   return (
-    <motion.div variants={fadeUp} className="bg-[var(--bg-surface)] border border-[var(--border)] rounded-2xl p-4 flex flex-col justify-between h-24">
-      <div className="text-indigo-600 dark:text-indigo-400"><Icon name={icon} size={18} /></div>
+    <motion.div variants={fadeUp} 
+      className="border-0 rounded-2xl p-4 flex flex-col justify-between h-24 text-white shadow-md"
+      style={{ background: gradient }}
+    >
+      <div className="text-white/80"><Icon name={icon} size={18} /></div>
       <div>
-        <p className="text-2xl font-bold text-[var(--text-primary)] leading-none">{value}</p>
-        <p className="text-[10px] font-semibold text-[var(--text-muted)] mt-1 truncate">{label}</p>
+        <p className="text-2xl font-extrabold leading-none">{value}</p>
+        <p className="text-[10px] font-bold text-white/90 mt-1 truncate">{label}</p>
       </div>
     </motion.div>
   )
@@ -455,25 +458,27 @@ export default function Dashboard() {
         <motion.div variants={staggerContainer} initial="initial" animate="animate" className="space-y-10">
           {/* Stats */}
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-            <StatBox label="Total Groups" value={all.length}        icon="layers" />
-            <StatBox label="My Groups"    value={mine.length}       icon="users" />
-            <StatBox label="Open Groups"  value={open}              icon="unlock" />
-            <StatBox label="Locked"       value={all.length - open} icon="lock" />
+            <StatBox label="Total Groups" value={all.length}        icon="layers" gradient="linear-gradient(135deg, #3b82f6, #1d4ed8)" />
+            <StatBox label="My Groups"    value={mine.length}       icon="users"  gradient="linear-gradient(135deg, #10b981, #059669)" />
+            <StatBox label="Open Groups"  value={open}              icon="unlock" gradient="linear-gradient(135deg, #f59e0b, #d97706)" />
+            <StatBox label="Locked"       value={all.length - open} icon="lock"   gradient="linear-gradient(135deg, #ef4444, #dc2626)" />
           </div>
 
           {/* Quick actions */}
           <motion.div variants={fadeUp}>
             <p className="text-xs font-semibold text-[var(--text-muted)] uppercase tracking-widest mb-3">Quick Actions</p>
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               {[
                 { icon: 'plus',   label: 'Create Group',  desc: 'Start a new team',       page: 'create-group',    gradient: 'linear-gradient(135deg, #f97316, #ea580c)' },
                 { icon: 'search', label: 'Browse Groups', desc: 'Find groups to join',     page: 'browse-groups',   gradient: 'linear-gradient(135deg, #06b6d4, #0891b2)' },
                 { icon: 'users',  label: 'My Groups',     desc: 'View your memberships',   page: 'my-groups',       gradient: 'linear-gradient(135deg, #6366f1, #4f46e5)' },
-              ].map(a => (
+              ].map((a, idx) => (
                 <motion.button key={a.page} onClick={() => navigate(a.page)}
-                  whileHover={{ y: -4, scale: 1.02, boxShadow: '0 12px 30px rgba(99,102,241,0.15)' }}
+                  whileHover={{ y: -4, scale: 1.01, boxShadow: '0 12px 30px rgba(99,102,241,0.15)' }}
                   whileTap={{ scale: 0.98 }}
-                  className="flex items-center gap-4 p-4 rounded-2xl border-0 text-left relative overflow-hidden text-white shadow-md cursor-pointer transition-all"
+                  className={`flex items-center gap-4 p-4 rounded-2xl border-0 text-left relative overflow-hidden text-white shadow-md cursor-pointer transition-all ${
+                    idx === 2 ? 'sm:col-span-2' : ''
+                  }`}
                   style={{ background: a.gradient }}
                 >
                   <div className="w-11 h-11 rounded-xl bg-white/15 flex items-center justify-center text-white shrink-0 border border-white/10">
