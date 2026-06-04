@@ -26,19 +26,23 @@ function StatBox({ label, value, icon }) {
 }
 
 // ── Subject section inside a dept ────────────────────────────────────────────
+const PREVIEW = 2
+
 function SubjectSection({ subject, navigate, membersMap, deptKey }) {
-  const [open, setOpen] = useState(true)
-  const cfg = DEPT[deptKey]
+  const [open,     setOpen]     = useState(true)
+  const [expanded, setExpanded] = useState(false)
+  const cfg    = DEPT[deptKey]
   const groups = subject.groups || []
+  const total  = groups.length
+  const visible = expanded ? groups : groups.slice(0, PREVIEW)
+  const hidden  = total - PREVIEW
 
   return (
     <div className="rounded-2xl overflow-hidden" style={{ border: '1px solid var(--border)', background: 'var(--bg-surface)' }}>
-      {/* Subject header — clickable to collapse */}
       <button onClick={() => setOpen(o => !o)}
         className="w-full flex items-center justify-between px-4 py-3 transition-colors hover:bg-[var(--bg-raised)]"
         style={{ borderBottom: open ? '1px solid var(--border)' : 'none' }}>
         <div className="flex items-center gap-3">
-          {/* Subject code pill */}
           <div className={`px-2.5 py-1 rounded-lg text-xs font-bold border ${
             deptKey === 'SE'
               ? 'bg-orange-50 dark:bg-orange-400/10 text-orange-600 dark:text-orange-400 border-orange-200 dark:border-orange-400/20'
@@ -46,14 +50,13 @@ function SubjectSection({ subject, navigate, membersMap, deptKey }) {
           }`}>
             {subject.name}
           </div>
-          <Badge variant={deptKey === 'SE' ? 'se' : 'cs'}>{groups.length} group{groups.length !== 1 ? 's' : ''}</Badge>
+          <Badge variant={deptKey === 'SE' ? 'se' : 'cs'}>{total} group{total !== 1 ? 's' : ''}</Badge>
         </div>
         <motion.div animate={{ rotate: open ? 180 : 0 }} transition={springSnappy}>
           <Icon name="chevronDown" size={15} className="text-[var(--text-muted)]" />
         </motion.div>
       </button>
 
-      {/* Groups grid */}
       <AnimatePresence initial={false}>
         {open && (
           <motion.div
@@ -61,12 +64,25 @@ function SubjectSection({ subject, navigate, membersMap, deptKey }) {
             animate={{ height: 'auto', opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
             transition={springSmooth}>
-            <div className="p-4 grid grid-cols-1 sm:grid-cols-2 gap-3">
-              {groups.map(g => (
-                <GroupCard key={g.id} group={g}
-                  members={membersMap[g.id] || []}
-                  onClick={() => navigate('group-detail', g)} />
-              ))}
+            <div className="p-4 space-y-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                {visible.map(g => (
+                  <GroupCard key={g.id} group={g}
+                    members={membersMap[g.id] || []}
+                    onClick={() => navigate('group-detail', g)} />
+                ))}
+              </div>
+              {total > PREVIEW && (
+                <button
+                  onClick={() => setExpanded(e => !e)}
+                  className="w-full flex items-center justify-center gap-2 py-2 rounded-xl text-xs font-semibold transition-all hover:bg-[var(--bg-raised)] text-[var(--text-muted)] hover:text-[var(--text-primary)]"
+                  style={{ border: '1px dashed var(--border)' }}>
+                  {expanded
+                    ? <><Icon name="chevronUp" size={13} /> Show less</>
+                    : <><Icon name="chevronDown" size={13} /> {hidden} more group{hidden !== 1 ? 's' : ''}</>
+                  }
+                </button>
+              )}
             </div>
           </motion.div>
         )}

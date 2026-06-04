@@ -48,12 +48,19 @@ function groupByDeptThenSubject(groups) {
 }
 
 // ── Collapsible subject section ───────────────────────────────────────────────
+const PREVIEW = 2   // groups shown before "show more"
+
 function SubjectSection({ subject, joining, onJoin, navigate, membersMap, deptKey }) {
-  const [open, setOpen] = useState(true)
-  const cfg = DEPT_CFG[deptKey] || DEPT_CFG.SE
+  const [open,     setOpen]    = useState(true)
+  const [expanded, setExpanded] = useState(false)
+  const cfg     = DEPT_CFG[deptKey] || DEPT_CFG.SE
+  const total   = subject.groups.length
+  const visible = expanded ? subject.groups : subject.groups.slice(0, PREVIEW)
+  const hidden  = total - PREVIEW
 
   return (
     <div className="rounded-2xl overflow-hidden" style={{ border: '1px solid var(--border)', background: 'var(--bg-surface)' }}>
+      {/* Subject header */}
       <button onClick={() => setOpen(o => !o)}
         className="w-full flex items-center justify-between px-4 py-3 transition-colors hover:bg-[var(--bg-raised)]"
         style={{ borderBottom: open ? '1px solid var(--border)' : 'none' }}>
@@ -62,7 +69,7 @@ function SubjectSection({ subject, joining, onJoin, navigate, membersMap, deptKe
             {subject.name}
           </span>
           <Badge variant={deptKey === 'SE' ? 'se' : 'cs'}>
-            {subject.groups.length} group{subject.groups.length !== 1 ? 's' : ''}
+            {total} group{total !== 1 ? 's' : ''}
           </Badge>
         </div>
         <motion.div animate={{ rotate: open ? 180 : 0 }} transition={springSnappy}>
@@ -77,15 +84,31 @@ function SubjectSection({ subject, joining, onJoin, navigate, membersMap, deptKe
             animate={{ height: 'auto', opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
             transition={springSmooth}>
-            <div className="p-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-              {subject.groups.map(g => (
-                <GroupCard key={g.id} group={g}
-                  members={membersMap[g.id] || []}
-                  showJoin
-                  joinLoading={joining === g.id}
-                  onJoin={onJoin}
-                  onClick={() => navigate('group-detail', g)} />
-              ))}
+            <div className="p-4 space-y-3">
+              {/* Groups grid */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                {visible.map(g => (
+                  <GroupCard key={g.id} group={g}
+                    members={membersMap[g.id] || []}
+                    showJoin
+                    joinLoading={joining === g.id}
+                    onJoin={onJoin}
+                    onClick={() => navigate('group-detail', g)} />
+                ))}
+              </div>
+
+              {/* Show more / less */}
+              {total > PREVIEW && (
+                <button
+                  onClick={() => setExpanded(e => !e)}
+                  className="w-full flex items-center justify-center gap-2 py-2 rounded-xl text-xs font-semibold transition-all hover:bg-[var(--bg-raised)] text-[var(--text-muted)] hover:text-[var(--text-primary)]"
+                  style={{ border: '1px dashed var(--border)' }}>
+                  {expanded
+                    ? <><Icon name="chevronUp" size={13} /> Show less</>
+                    : <><Icon name="chevronDown" size={13} /> {hidden} more group{hidden !== 1 ? 's' : ''}</>
+                  }
+                </button>
+              )}
             </div>
           </motion.div>
         )}
