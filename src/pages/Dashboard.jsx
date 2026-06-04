@@ -26,7 +26,7 @@ function StatBox({ label, value, icon }) {
 }
 
 // ── Interactive Subject Wallet Card ───────────────────────────────────────────
-function SubjectWallet({ subject, navigate, membersMap, deptKey }) {
+function SubjectWallet({ subject, navigate, membersMap, deptKey, index: walletIndex }) {
   const groups = subject.groups || []
   const [hovered, setHovered] = useState(false)
   const [hoveredCardIndex, setHoveredCardIndex] = useState(null)
@@ -73,8 +73,52 @@ function SubjectWallet({ subject, navigate, membersMap, deptKey }) {
     return gradients[index % gradients.length];
   };
 
-  const pocketColor = deptKey === 'SE' ? '#431407' : '#0f172a'; // Deep rustic dark-orange / deep slate navy
-  const pocketStroke = deptKey === 'SE' ? '#ea580c' : '#06b6d4';
+  const getPocketStyle = (index) => {
+    const seStyles = [
+      { fill: '#431407', stroke: '#f97316' }, // Rust / Orange
+      { fill: '#3f0712', stroke: '#ef4444' }, // Burgundy / Red
+      { fill: '#2d0b30', stroke: '#d946ef' }, // Purple / Magenta
+      { fill: '#581c87', stroke: '#a855f7' }, // Violet / Lavender
+      { fill: '#701a75', stroke: '#f472b6' }, // Dark Rose / Pink
+      { fill: '#881337', stroke: '#fb7185' }, // Wine / Rose
+      { fill: '#7c2d12', stroke: '#f97316' }, // Terracotta / Coral
+      { fill: '#78350f', stroke: '#f59e0b' }, // Dark Amber / Gold
+      { fill: '#451a03', stroke: '#fb923c' }, // Espresso / Peach
+      { fill: '#4c0519', stroke: '#f43f5e' }, // Crimson / Strawberry
+      { fill: '#3b0764', stroke: '#c084fc' }, // Royal / Grape
+      { fill: '#1e1b4b', stroke: '#818cf8' }, // Indigo / Blue
+      { fill: '#50074f', stroke: '#e879f9' }, // Plum / Pink Orchid
+      { fill: '#311042', stroke: '#c084fc' }, // Mulberry / Lavender
+      { fill: '#991b1b', stroke: '#ef4444' }, // Crimson / Fire
+      { fill: '#621a55', stroke: '#f472b6' }  // Jam / Mauve
+    ];
+    
+    const csStyles = [
+      { fill: '#0f172a', stroke: '#38bdf8' }, // Midnight Slate / Sky
+      { fill: '#042f2e', stroke: '#2dd4bf' }, // Deep Teal / Mint
+      { fill: '#064e3b', stroke: '#34d399' }, // Forest Green / Emerald
+      { fill: '#172554', stroke: '#60a5fa' }, // Deep Ocean / Blue
+      { fill: '#164e63', stroke: '#22d3ee' }, // Dark Cyan / Aqua
+      { fill: '#0c4a6e', stroke: '#38bdf8' }, // Sky Deep / Cyan
+      { fill: '#022c22', stroke: '#10b981' }, // Midnight Mint / Green
+      { fill: '#1e1b4b', stroke: '#818cf8' }, // Royal Navy / Indigo
+      { fill: '#075985', stroke: '#0ea5e9' }, // Deep Aqua / Sky
+      { fill: '#065f46', stroke: '#10b981' }, // Pine Green / Mint
+      { fill: '#0f766e', stroke: '#14b8a6' }, // Ocean Deep / Teal
+      { fill: '#1e3a8a', stroke: '#3b82f6' }, // Cobalt Navy / Blue
+      { fill: '#0369a1', stroke: '#06b6d4' }, // Steel Blue / Cyan
+      { fill: '#083344', stroke: '#22d3ee' }, // Deep Cyan / Teal
+      { fill: '#111827', stroke: '#9ca3af' }, // Onyx / Slate
+      { fill: '#0f172a', stroke: '#818cf8' }  // Dark Slate / Lavender
+    ];
+
+    const list = deptKey === 'SE' ? seStyles : csStyles;
+    return list[index % list.length];
+  };
+
+  const pocketStyle = getPocketStyle(walletIndex);
+  const pocketColor = pocketStyle.fill;
+  const pocketStroke = pocketStyle.stroke;
 
   return (
     <div 
@@ -312,7 +356,7 @@ function DeptSection({ dept, data, navigate, membersMap }) {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 justify-items-center sm:justify-items-start">
           {bySubject.map((subj, i) => (
             <motion.div key={subj.id || 'general'} variants={fadeUp} custom={i}>
-              <SubjectWallet subject={subj} navigate={navigate} membersMap={membersMap} deptKey={dept} />
+              <SubjectWallet subject={subj} navigate={navigate} membersMap={membersMap} deptKey={dept} index={i} />
             </motion.div>
           ))}
         </div>
