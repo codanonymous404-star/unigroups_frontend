@@ -411,18 +411,22 @@ function QuickActionCard({ a, idx, navigate }) {
         whileHover={{
           y: -6,
           scale: 1.02,
-          boxShadow: '0 20px 40px rgba(0, 0, 0, 0.22)'
+          boxShadow: '0 20px 40px rgba(0, 0, 0, 0.25)'
         }}
-        whileTap={{ scale: 0.97 }}
+        whileTap={{
+          scale: 0.97,
+          boxShadow: 'inset 6px 6px 12px rgba(0, 0, 0, 0.5), inset -6px -6px 12px rgba(255, 255, 255, 0.2)'
+        }}
         style={{
           background: a.gradient,
           rotateX,
           rotateY,
           transformStyle: 'preserve-3d',
           width: '100%',
-          willChange: 'transform'
+          willChange: 'transform',
+          boxShadow: 'inset 4px 4px 8px rgba(0, 0, 0, 0.35), inset -4px -4px 8px rgba(255, 255, 255, 0.18)'
         }}
-        className="flex items-center gap-4 p-5 rounded-2xl border-0 text-left relative overflow-hidden text-white shadow-md cursor-pointer transition-all duration-200"
+        className="flex items-center gap-4 p-5 rounded-2xl border-0 text-left relative overflow-hidden text-white cursor-pointer transition-all duration-200"
       >
         {/* Shine/Glare reflection overlay */}
         <motion.div
