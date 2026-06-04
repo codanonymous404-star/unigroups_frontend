@@ -15,23 +15,23 @@ import { fadeUp }       from '../utils/animations.js'
 import { motion }       from 'framer-motion'
 
 export default function CreateGroup() {
-  const { navigate }          = useApp()
-  const { user, isAdmin }     = useAuth()
-  const studentDept           = !isAdmin ? user?.department : null
+  const { navigate }       = useApp()
+  const { user, isAdmin }  = useAuth()
+  const studentDept        = !isAdmin ? user?.department : null
 
-  const [dept, setDept]       = useState(studentDept || '')
-  const [subjects, setSubjs]  = useState([])
-  const [subjId, setSubjId]   = useState('')
-  const [maxMembers, setMax]  = useState('')
-  const [description, setDesc]= useState('')
-  const [people, setPeople]   = useState([])
-  const [selected, setSel]    = useState([])
-  const [loadSubj, setLoadSubj] = useState(false)
-  const [loadPpl, setLoadPpl]   = useState(false)
-  const [loading, setLoad]      = useState(false)
-  const [done, setDone]         = useState(false)
-  const [created, setCreated]   = useState(null)
-  const [error, setError]       = useState('')
+  const [dept, setDept]    = useState(studentDept || '')
+  const [subjects, setSubjs]   = useState([])
+  const [subjId, setSubjId]    = useState('')
+  const [maxMembers, setMax]   = useState('')
+  const [description, setDesc] = useState('')
+  const [people, setPeople]    = useState([])
+  const [selected, setSel]     = useState([])
+  const [loadSubj, setLoadSubj]= useState(false)
+  const [loadPpl, setLoadPpl]  = useState(false)
+  const [loading, setLoad]     = useState(false)
+  const [done, setDone]        = useState(false)
+  const [created, setCreated]  = useState(null)
+  const [error, setError]      = useState('')
 
   // Load subjects when dept changes
   useEffect(() => {
@@ -43,7 +43,7 @@ export default function CreateGroup() {
       .finally(() => setLoadSubj(false))
   }, [dept])
 
-  // Load classmates/students when dept changes
+  // Load classmates when dept changes
   useEffect(() => {
     if (!dept) return
     setLoadPpl(true); setSel([])
@@ -55,10 +55,25 @@ export default function CreateGroup() {
 
   const toggle = id => setSel(p => p.includes(id) ? p.filter(x => x !== id) : [...p, id])
 
+  // Selected subject object
+  const selectedSubj = subjects.find(s => s.id === parseInt(subjId))
+
+  // Filter out people already in a group for the selected subject
+  const availablePeople = selectedSubj
+    ? people.filter(p => !selectedSubj.already_taken_user_ids?.includes(p.id))
+    : people
+
+  // If selected members are now filtered out, remove them from selection
+  useEffect(() => {
+    if (!selectedSubj) return
+    const takenIds = selectedSubj.already_taken_user_ids || []
+    setSel(prev => prev.filter(id => !takenIds.includes(id)))
+  }, [subjId])
+
   const submit = async e => {
     e.preventDefault(); setError('')
-    if (!dept)    { setError('Select a department.'); return }
-    if (!subjId)  { setError('Select a subject.'); return }
+    if (!dept)   { setError('Select a department.'); return }
+    if (!subjId) { setError('Select a subject.'); return }
     const max = parseInt(maxMembers)
     if (!max || max < 2 || max > 20) { setError('Max members must be 2–20.'); return }
     setLoad(true)
@@ -101,9 +116,6 @@ export default function CreateGroup() {
     </div>
   )
 
-  // ── Subject selector ────────────────────────────────────────────────────────
-  const selectedSubj = subjects.find(s => s.id === parseInt(subjId))
-
   return (
     <div className="max-w-xl space-y-6">
       <motion.div variants={fadeUp}>
@@ -118,55 +130,71 @@ export default function CreateGroup() {
         <form onSubmit={submit} className={`space-y-5 ${error ? 'mt-4' : ''}`}>
 
           {/* Department */}
-          <DeptSelector
-            value={dept}
-            onChange={v => setDept(v)}
-            locked={!isAdmin}
-            lockedDept={studentDept}
-          />
+          <DeptSelector value={dept} onChange={v => setDept(v)} locked={!isAdmin} lockedDept={studentDept} />
 
-          {/* Subject dropdown */}
+          {/* Subject selector */}
           <div>
             <label className="block text-xs font-bold text-[var(--text-secondary)] uppercase tracking-wider mb-1.5">
               Subject <span className="text-red-400">*</span>
             </label>
-            {loadSubj ? (
-              <div className="h-11 rounded-xl animate-pulse" style={{ background: 'var(--bg-raised)' }} />
-            ) : subjects.length === 0 && dept ? (
+
+            {!dept ? (
+              <div className="px-4 py-3 rounded-xl text-sm text-[var(--text-muted)]"
+                style={{ background: 'var(--bg-raised)', border: '1px solid var(--border)' }}>
+                Select a department first
+              </div>
+            ) : loadSubj ? (
+              <div className="space-y-2">
+                {[1,2].map(i => <div key={i} className="h-16 rounded-xl animate-pulse" style={{ background: 'var(--bg-raised)' }} />)}
+              </div>
+            ) : subjects.length === 0 ? (
               <div className="flex items-center gap-2 px-4 py-3 rounded-xl text-sm text-[var(--text-muted)]"
                 style={{ background: 'var(--bg-raised)', border: '1px solid var(--border)' }}>
                 <Icon name="alertCircle" size={14} />
-                No subjects available for this department.
-                {isAdmin && <span className="text-indigo-500 ml-1">Add subjects from Admin Panel.</span>}
+                No subjects available.
+                {isAdmin && <span className="text-indigo-500 ml-1">Add from Admin → Subjects.</span>}
               </div>
             ) : (
               <div className="grid gap-2">
-                {subjects.map(s => (
-                  <button key={s.id} type="button"
-                    onClick={() => setSubjId(s.id.toString())}
-                    className={`flex items-center gap-3 px-4 py-3 rounded-xl border-2 text-left transition-all w-full
-                      ${subjId === s.id.toString()
-                        ? 'border-indigo-400 bg-indigo-50 dark:bg-indigo-400/10'
-                        : 'border-[var(--border)] hover:border-indigo-300 hover:bg-[var(--bg-raised)]'}`}>
-                    <div className={`w-9 h-9 rounded-xl flex items-center justify-center shrink-0 font-bold text-xs
-                      ${subjId === s.id.toString()
-                        ? 'bg-indigo-500/20 text-indigo-600 dark:text-indigo-400'
-                        : 'bg-[var(--bg-raised)] text-[var(--text-muted)]'}`}>
-                      {s.code}
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <p className={`text-sm font-semibold ${subjId === s.id.toString() ? 'text-indigo-600 dark:text-indigo-400' : 'text-[var(--text-primary)]'}`}>
-                        {s.name}
-                      </p>
-                      <p className="text-xs text-[var(--text-muted)]">
-                        Group name will be auto-generated: <span className="font-mono">{s.code}-N</span>
-                      </p>
-                    </div>
-                    {subjId === s.id.toString() &&
-                      <Icon name="checkCircle" size={16} className="text-indigo-500 shrink-0" />
-                    }
-                  </button>
-                ))}
+                {subjects.map(s => {
+                  const isActive = subjId === s.id.toString()
+                  const takenCount = s.already_taken_user_ids?.length || 0
+                  return (
+                    <button key={s.id} type="button" onClick={() => setSubjId(s.id.toString())}
+                      className={`flex items-center gap-3 px-4 py-3 rounded-xl border-2 text-left transition-all w-full
+                        ${isActive
+                          ? 'border-indigo-400 bg-indigo-50 dark:bg-indigo-400/10'
+                          : 'border-[var(--border)] hover:border-indigo-300 hover:bg-[var(--bg-raised)]'}`}>
+
+                      {/* Code badge — fixed: always visible box */}
+                      <div className={`min-w-[44px] h-11 rounded-xl flex items-center justify-center shrink-0 font-bold text-xs px-2
+                        ${isActive
+                          ? 'bg-indigo-500/20 text-indigo-600 dark:text-indigo-400'
+                          : 'bg-[var(--bg-raised)] text-[var(--text-muted)]'}`}
+                        style={{ border: `1px solid ${isActive ? 'rgba(99,102,241,0.3)' : 'var(--border)'}` }}>
+                        {s.code}
+                      </div>
+
+                      <div className="flex-1 min-w-0">
+                        <p className={`text-sm font-semibold ${isActive ? 'text-indigo-600 dark:text-indigo-400' : 'text-[var(--text-primary)]'}`}>
+                          {s.name}
+                        </p>
+                        <div className="flex items-center gap-2 mt-0.5 flex-wrap">
+                          <p className="text-xs text-[var(--text-muted)]">
+                            Auto-name: <span className="font-mono">{s.code}-N</span>
+                          </p>
+                          {takenCount > 0 && (
+                            <span className="text-xs text-amber-500 dark:text-amber-400">
+                              · {takenCount} student{takenCount !== 1 ? 's' : ''} already grouped
+                            </span>
+                          )}
+                        </div>
+                      </div>
+
+                      {isActive && <Icon name="checkCircle" size={16} className="text-indigo-500 shrink-0" />}
+                    </button>
+                  )
+                })}
               </div>
             )}
           </div>
@@ -178,23 +206,20 @@ export default function CreateGroup() {
               style={{ background: 'var(--bg-raised)', border: '1px solid var(--border)' }}>
               <Icon name="tag" size={14} className="text-[var(--text-muted)] shrink-0" />
               <p className="text-sm text-[var(--text-secondary)]">
-                Group name: <span className="font-mono font-bold text-indigo-600 dark:text-indigo-400">{selectedSubj.code}-auto</span>
-                <span className="text-xs text-[var(--text-muted)] ml-1">(e.g. {selectedSubj.code}-1, {selectedSubj.code}-2)</span>
+                Group will be named&nbsp;
+                <span className="font-mono font-bold text-indigo-600 dark:text-indigo-400">
+                  {selectedSubj.code}-{(selectedSubj.already_taken_user_ids?.length > 0
+                    ? Math.ceil((selectedSubj.already_taken_user_ids.length) / (parseInt(maxMembers) || 1)) + 1
+                    : 1)}
+                </span>
+                <span className="text-xs text-[var(--text-muted)] ml-1">(exact number set by server)</span>
               </p>
             </motion.div>
           )}
 
           {/* Max members */}
-          <Input
-            label="Max Members"
-            type="number"
-            placeholder="5"
-            hint="2–20"
-            value={maxMembers}
-            onChange={e => setMax(e.target.value)}
-            min={2} max={20}
-            required
-          />
+          <Input label="Max Members" type="number" placeholder="5" hint="2–20"
+            value={maxMembers} onChange={e => setMax(e.target.value)} min={2} max={20} required />
 
           {/* Description */}
           <div>
@@ -209,10 +234,26 @@ export default function CreateGroup() {
             </div>
           </div>
 
-          {/* Member picker */}
-          {(dept || studentDept) &&
-            <MemberPicker people={people} selected={selected} onToggle={toggle} dept={dept || studentDept} loading={loadPpl} />
-          }
+          {/* Member picker — filtered */}
+          {dept && (
+            <>
+              {selectedSubj && availablePeople.length < people.length && (
+                <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}
+                  className="flex items-center gap-2 px-3 py-2.5 rounded-xl text-xs text-amber-600 dark:text-amber-400"
+                  style={{ background: 'rgba(245,158,11,0.08)', border: '1px solid rgba(245,158,11,0.2)' }}>
+                  <Icon name="alertCircle" size={13} />
+                  {people.length - availablePeople.length} student{people.length - availablePeople.length !== 1 ? 's' : ''} hidden — already in a {selectedSubj.code} group
+                </motion.div>
+              )}
+              <MemberPicker
+                people={availablePeople}
+                selected={selected}
+                onToggle={toggle}
+                dept={dept}
+                loading={loadPpl}
+              />
+            </>
+          )}
 
           <div className="px-4 py-3 rounded-xl bg-indigo-500/8 border border-indigo-500/15">
             <p className="text-xs text-[var(--text-secondary)]">
@@ -223,8 +264,7 @@ export default function CreateGroup() {
           </div>
 
           <Button type="submit" size="lg" loading={loading}
-            disabled={!dept || !subjId || !maxMembers}
-            fullWidth>
+            disabled={!dept || !subjId || !maxMembers} fullWidth>
             <Icon name="plus" size={16} /> Create Group
           </Button>
         </form>
