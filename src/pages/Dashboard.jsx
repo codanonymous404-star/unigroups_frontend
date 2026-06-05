@@ -176,6 +176,7 @@ function SubjectWallet({ subject, navigate, membersMap, deptKey, index: walletIn
         const total = groups.length;
         
         // Invert slot index so Group 1 (index 0) sits at the very front
+        const slotIndex = total - 1 - index;
         const zIndex = (isFanned && hoveredCardIndex === index) ? 100 : (10 + slotIndex);
         
         // 1. Initial stacked layout bottom positioning (responsive to prevent overflow when closed)
