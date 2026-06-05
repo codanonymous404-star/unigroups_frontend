@@ -208,62 +208,48 @@ function SubjectWallet({ subject, navigate, membersMap, deptKey, index: walletIn
           tx = factor * maxX;
         }
         
-        // Expand individual card higher on mouse focus / tap highlight
-        let scale = 1;
-        if (hoveredCardIndex === index) {
-          scale = 1.05;
-          ty -= 18;
-        }
-        
         return (
           <div
             key={g.id}
-            onClick={() => navigate('group-detail', g)}
-            onMouseEnter={() => setHoveredCardIndex(index)}
-            onMouseLeave={() => setHoveredCardIndex(null)}
-            onTouchStart={(e) => {
-              e.stopPropagation();
-              setHoveredCardIndex(index);
-            }}
             className="wallet-group-card"
             style={{ 
               zIndex,
               background: getCardGradient(index),
               bottom: initialBottom,
               transform: isFanned
-                ? `translateY(${ty}px) translateX(${tx}px) rotate(${rot}deg) scale(${scale})`
-                : 'translateY(0) translateX(0) rotate(0) scale(1)',
+                ? `translateY(${ty}px) translateX(${tx}px) rotate(${rot}deg)`
+                : 'translateY(0) translateX(0) rotate(0)',
               transition: 'transform 0.45s cubic-bezier(0.25, 0.8, 0.25, 1), z-index 0.1s ease',
             }}
           >
-            <div className="card-inner">
-              <div className="card-top">
-                <span className="font-bold tracking-wider text-xs truncate max-w-[70%]">{g.name}</span>
-                <div className="chip flex items-center justify-center">
-                  <Icon name={g.status === 'open' ? 'unlock' : 'lock'} size={11} className="text-white/90" />
+            <div className="card-inner flex flex-col justify-between h-full w-full">
+              <div className="card-top flex items-center justify-between gap-1 w-full">
+                <span className="font-bold tracking-wider text-[10px] sm:text-xs truncate max-w-[75%]">{g.name}</span>
+                <div className="chip flex items-center justify-center bg-white/20 p-1 rounded-full w-5 h-5 flex-shrink-0">
+                  <Icon name={g.status === 'open' ? 'unlock' : 'lock'} size={11} className="text-white/95" />
                 </div>
               </div>
               
               {/* Member names list - showing all members without slice */}
-              <div className="my-1 flex flex-wrap gap-1 items-center max-h-[38px] overflow-hidden">
+              <div className="my-1 flex flex-wrap gap-1 items-center max-h-[38px] overflow-hidden w-full">
                 {groupMembers.map((m, i) => {
                   const u = m.user || m;
                   return (
-                    <span key={u?.id || i} className="text-[8px] font-semibold px-1 py-0.5 rounded bg-white/20 text-white truncate max-w-[70px]">
+                    <span key={u?.id || i} className="text-[8px] font-semibold px-1 py-0.5 rounded bg-white/25 text-white truncate max-w-[70px]">
                       {u?.name?.split(' ')[0]}
                     </span>
                   )
                 })}
               </div>
 
-              <div className="card-bottom">
-                <div className="card-info">
-                  <span className="label">Members</span>
-                  <span className="value font-bold text-white">{mc} / {max}</span>
+              <div className="card-bottom flex items-end justify-between w-full mt-auto">
+                <div className="card-info flex flex-col items-start">
+                  <span className="label text-[8px] opacity-75 uppercase tracking-wide">Members</span>
+                  <span className="value font-bold text-white text-[10px] sm:text-xs">{mc} / {max}</span>
                 </div>
                 <div className="card-number-wrapper flex flex-col items-end">
-                  <span className="label">{g.my_role ? 'Role' : 'Status'}</span>
-                  <span className="value font-mono text-[10px] uppercase font-bold text-white">
+                  <span className="label text-[8px] opacity-75 uppercase tracking-wide">{g.my_role ? 'Role' : 'Status'}</span>
+                  <span className="value font-mono text-[9px] sm:text-[10px] uppercase font-bold text-white">
                     {g.my_role || g.status}
                   </span>
                 </div>
@@ -274,7 +260,7 @@ function SubjectWallet({ subject, navigate, membersMap, deptKey, index: walletIn
       })}
       
       {/* Pocket */}
-      <div className="wallet-pocket" onClick={toggleOpen}>
+      <div className="wallet-pocket cursor-pointer" onClick={() => navigate('browse-groups')}>
         <svg className="wallet-pocket-bg" viewBox="0 0 290 160" fill="none">
           <path
             d="M 0 20 C 0 10, 5 10, 10 10 C 20 10, 25 25, 40 25 L 250 25 C 265 25, 270 10, 280 10 C 285 10, 290 10, 290 20 L 290 120 C 290 155, 270 160, 250 160 L 40 160 C 20 160, 0 155, 0 120 Z"
@@ -287,9 +273,25 @@ function SubjectWallet({ subject, navigate, membersMap, deptKey, index: walletIn
             strokeDasharray="6 4"
           />
         </svg>
-        <div className="pocket-content-overlay">
-          <p className="pocket-title" title={subject.name}>{subject.name}</p>
-          <span className="pocket-subtitle">
+        <div className="pocket-content-overlay flex flex-col items-center justify-center gap-1">
+          <p 
+            className="pocket-title font-bold text-white text-center px-2"
+            style={{
+              fontSize: subject.name.length > 25 ? '11px' : subject.name.length > 15 ? '13px' : '15px',
+              lineHeight: '1.25',
+              fontFamily: 'Outfit, sans-serif',
+              display: '-webkit-box',
+              WebkitLineClamp: 2,
+              WebkitBoxOrient: 'vertical',
+              overflow: 'hidden',
+              wordBreak: 'break-word',
+              textShadow: '0 2px 4px rgba(0,0,0,0.3)'
+            }}
+            title={subject.name}
+          >
+            {subject.name}
+          </p>
+          <span className="pocket-subtitle font-semibold">
             {groups.length} Group{groups.length !== 1 ? 's' : ''}
           </span>
           <button
