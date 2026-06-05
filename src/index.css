@@ -439,8 +439,15 @@ body::before {
     width: 8px;
     height: 8px;
   }
+  .wallet-group-card .my-1 {
+    flex-wrap: nowrap !important;
+    overflow: hidden !important;
+    max-height: 16px !important;
+    margin-top: 2px !important;
+    margin-bottom: 2px !important;
+  }
   .wallet-group-card .card-bottom {
-    margin-top: 4px;
+    margin-top: 2px !important;
   }
   .wallet-group-card .card-bottom .label {
     font-size: 6px;

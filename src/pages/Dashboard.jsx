@@ -386,10 +386,12 @@ function DeptSection({ dept, data, navigate, membersMap }) {
           <h2 className="font-bold text-xs sm:text-base text-[var(--text-primary)]">{cfg.label}</h2>
           <Badge variant={cfg.badge} className="text-[10px]">{groups.length}</Badge>
         </div>
-        <Button variant="ghost" size="sm" onClick={() => navigate('browse-groups')}
-          className="text-indigo-600 dark:text-indigo-400 text-[10px] sm:text-xs px-2 py-1 h-auto">
+        <button
+          onClick={() => navigate('browse-groups')}
+          className="text-indigo-600 dark:text-indigo-400 font-bold hover:underline flex items-center gap-1 text-[11px] sm:text-xs bg-transparent border-0 cursor-pointer p-1"
+        >
           View all <Icon name="arrowRight" size={11} />
-        </Button>
+        </button>
       </div>
 
       {groups.length === 0 ? (
