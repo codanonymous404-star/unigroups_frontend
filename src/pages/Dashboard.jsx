@@ -45,13 +45,29 @@ function QuickActionCard({ a, navigate }) {
 
 
 // ── Interactive Subject Wallet Card ───────────────────────────────────────────
-function SubjectWallet({ subject, navigate, membersMap, deptKey, index: walletIndex }) {
+function SubjectWallet({ subject, navigate, membersMap, deptKey, index: walletIndex, activeWalletId, setActiveWalletId }) {
   const groups = subject.groups || []
   const [hovered, setHovered] = useState(false)
   const [hoveredCardIndex, setHoveredCardIndex] = useState(null)
-  const [isOpen, setIsOpen] = useState(false)
-  
+
+  const walletId = subject.id || `wallet-${walletIndex}-${deptKey}`;
+  const isOpen = activeWalletId === walletId;
   const isFanned = hovered || isOpen;
+
+  const handleMouseEnter = () => {
+    if (window.matchMedia('(hover: hover)').matches) {
+      setHovered(true);
+    }
+  };
+
+  const toggleOpen = (e) => {
+    e.stopPropagation();
+    if (isOpen) {
+      setActiveWalletId(null);
+    } else {
+      setActiveWalletId(walletId);
+    }
+  };
   
   // Modulo generator for 16+ colorful premium card gradients matching SE and CS
   const getCardGradient = (index) => {
@@ -145,7 +161,7 @@ function SubjectWallet({ subject, navigate, membersMap, deptKey, index: walletIn
   return (
     <div 
       className="subject-wallet group"
-      onMouseEnter={() => setHovered(true)}
+      onMouseEnter={handleMouseEnter}
       onMouseLeave={() => { setHovered(false); setHoveredCardIndex(null); }}
     >
       {/* Wallet back panel */}
@@ -255,7 +271,7 @@ function SubjectWallet({ subject, navigate, membersMap, deptKey, index: walletIn
       })}
       
       {/* Pocket */}
-      <div className="wallet-pocket" onClick={() => setIsOpen(!isOpen)}>
+      <div className="wallet-pocket" onClick={toggleOpen}>
         <svg className="wallet-pocket-bg" viewBox="0 0 290 160" fill="none">
           <path
             d="M 0 20 C 0 10, 5 10, 10 10 C 20 10, 25 25, 40 25 L 250 25 C 265 25, 270 10, 280 10 C 285 10, 290 10, 290 20 L 290 120 C 290 155, 270 160, 250 160 L 40 160 C 20 160, 0 155, 0 120 Z"
@@ -275,10 +291,7 @@ function SubjectWallet({ subject, navigate, membersMap, deptKey, index: walletIn
           </span>
           <button
             type="button"
-            onClick={(e) => {
-              e.stopPropagation();
-              setIsOpen(!isOpen);
-            }}
+            onClick={toggleOpen}
             className="flex items-center justify-center w-6 h-6 rounded-full bg-white/20 hover:bg-white/35 border-0 text-white cursor-pointer transition-all duration-200 mt-1"
             style={{ pointerEvents: 'auto' }}
             title={isOpen ? "Collapse groups" : "Expand groups"}
@@ -362,6 +375,7 @@ function DeptSection({ dept, data, navigate, membersMap }) {
   const cfg       = DEPT[dept]
   const groups    = data?.groups || []
   const bySubject = data?.by_subject || []
+  const [activeWalletId, setActiveWalletId] = useState(null)
 
   return (
     <section className="p-6 rounded-2xl bg-[var(--bg-surface)] border border-[var(--border)] shadow-sm">
@@ -386,7 +400,15 @@ function DeptSection({ dept, data, navigate, membersMap }) {
         <div className="grid grid-cols-2 lg:grid-cols-3 gap-2 sm:gap-6 justify-items-center">
           {bySubject.map((subj, i) => (
             <motion.div key={subj.id || 'general'} variants={fadeUp} custom={i}>
-              <SubjectWallet subject={subj} navigate={navigate} membersMap={membersMap} deptKey={dept} index={i} />
+              <SubjectWallet
+                subject={subj}
+                navigate={navigate}
+                membersMap={membersMap}
+                deptKey={dept}
+                index={i}
+                activeWalletId={activeWalletId}
+                setActiveWalletId={setActiveWalletId}
+              />
             </motion.div>
           ))}
         </div>
