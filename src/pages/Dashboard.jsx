@@ -49,6 +49,9 @@ function SubjectWallet({ subject, navigate, membersMap, deptKey, index: walletIn
   const groups = subject.groups || []
   const [hovered, setHovered] = useState(false)
   const [hoveredCardIndex, setHoveredCardIndex] = useState(null)
+  const [isOpen, setIsOpen] = useState(false)
+  
+  const isFanned = hovered || isOpen;
   
   // Modulo generator for 16+ colorful premium card gradients matching SE and CS
   const getCardGradient = (index) => {
@@ -209,7 +212,7 @@ function SubjectWallet({ subject, navigate, membersMap, deptKey, index: walletIn
               zIndex,
               background: getCardGradient(index),
               bottom: initialBottom,
-              transform: hovered
+              transform: isFanned
                 ? `translateY(${ty}px) translateX(${tx}px) rotate(${rot}deg) scale(${scale})`
                 : 'translateY(0) translateX(0) rotate(0) scale(1)',
               transition: 'transform 0.45s cubic-bezier(0.25, 0.8, 0.25, 1), z-index 0.1s ease',
@@ -253,7 +256,7 @@ function SubjectWallet({ subject, navigate, membersMap, deptKey, index: walletIn
       })}
       
       {/* Pocket */}
-      <div className="wallet-pocket">
+      <div className="wallet-pocket" onClick={() => setIsOpen(!isOpen)}>
         <svg className="wallet-pocket-bg" viewBox="0 0 290 160" fill="none">
           <path
             d="M 0 20 C 0 10, 5 10, 10 10 C 20 10, 25 25, 40 25 L 250 25 C 265 25, 270 10, 280 10 C 285 10, 290 10, 290 20 L 290 120 C 290 155, 270 160, 250 160 L 40 160 C 20 160, 0 155, 0 120 Z"
@@ -272,7 +275,7 @@ function SubjectWallet({ subject, navigate, membersMap, deptKey, index: walletIn
             {groups.length} Group{groups.length !== 1 ? 's' : ''}
           </span>
           <div className="pocket-eye-icon flex items-center justify-center">
-            <Icon name="eye" size={16} className="text-white/80 transition-transform group-hover:scale-110" />
+            <Icon name={isOpen ? "eyeOff" : "eye"} size={16} className="text-white/80 transition-transform group-hover:scale-110" />
           </div>
         </div>
       </div>
@@ -372,7 +375,7 @@ function DeptSection({ dept, data, navigate, membersMap }) {
           action={<Button variant="outline" size="sm" onClick={() => navigate('create-group')}><Icon name="plus" size={13} /> Create one</Button>} />
       ) : bySubject.length > 0 ? (
         // Subject-grouped view - interactive wallets grid!
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 justify-items-center sm:justify-items-start">
+        <div className="grid grid-cols-2 lg:grid-cols-3 gap-2 sm:gap-6 justify-items-center">
           {bySubject.map((subj, i) => (
             <motion.div key={subj.id || 'general'} variants={fadeUp} custom={i}>
               <SubjectWallet subject={subj} navigate={navigate} membersMap={membersMap} deptKey={dept} index={i} />
