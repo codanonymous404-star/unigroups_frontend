@@ -378,17 +378,17 @@ function DeptSection({ dept, data, navigate, membersMap }) {
   const [activeWalletId, setActiveWalletId] = useState(null)
 
   return (
-    <section className="p-6 rounded-2xl bg-[var(--bg-surface)] border border-[var(--border)] shadow-sm">
+    <section className="p-3 sm:p-6 rounded-2xl bg-[var(--bg-surface)] border border-[var(--border)] shadow-sm">
       {/* Dept header */}
-      <div className="flex items-center justify-between mb-4">
-        <div className="flex items-center gap-3">
+      <div className="flex items-center justify-between gap-2 mb-4 flex-wrap">
+        <div className="flex items-center gap-1.5 sm:gap-3">
           <div className={`h-5 w-1 rounded-full ${cfg.bar}`} />
-          <h2 className="font-bold text-[var(--text-primary)]">{cfg.label}</h2>
-          <Badge variant={cfg.badge}>{groups.length}</Badge>
+          <h2 className="font-bold text-xs sm:text-base text-[var(--text-primary)]">{cfg.label}</h2>
+          <Badge variant={cfg.badge} className="text-[10px]">{groups.length}</Badge>
         </div>
         <Button variant="ghost" size="sm" onClick={() => navigate('browse-groups')}
-          className="text-indigo-600 dark:text-indigo-400">
-          View all <Icon name="arrowRight" size={13} />
+          className="text-indigo-600 dark:text-indigo-400 text-[10px] sm:text-xs px-2 py-1 h-auto">
+          View all <Icon name="arrowRight" size={11} />
         </Button>
       </div>
 

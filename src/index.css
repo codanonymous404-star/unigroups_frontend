@@ -429,8 +429,11 @@ body::before {
     border-radius: 10px;
   }
   
+  .wallet-group-card span {
+    font-size: 7px !important;
+  }
   .wallet-group-card .card-top span {
-    font-size: 8px;
+    font-size: 7px !important;
   }
   .wallet-group-card .card-top .chip svg {
     width: 8px;
