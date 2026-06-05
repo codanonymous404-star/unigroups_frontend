@@ -147,7 +147,6 @@ function SubjectWallet({ subject, navigate, membersMap, deptKey, index: walletIn
       className="subject-wallet group"
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => { setHovered(false); setHoveredCardIndex(null); }}
-      onTouchStart={() => setHovered(true)}
     >
       {/* Wallet back panel */}
       <div className="wallet-back-panel" />
