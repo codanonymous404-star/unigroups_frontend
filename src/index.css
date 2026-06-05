@@ -243,6 +243,7 @@ body::before {
 
 .neu-container-card {
   background-color: var(--neu-card-bg);
+  border: 1px solid rgba(0, 0, 0, 0.05);
   border-radius: 15px;
   box-shadow: var(--neu-card-shadow);
   display: flex;
@@ -253,6 +254,10 @@ body::before {
   width: 100%;
   gap: 8px;
   flex-wrap: wrap;
+}
+
+.dark .neu-container-card {
+  border: 1px solid rgba(255, 255, 255, 0.05);
 }
 
 .neu-item-btn {
@@ -379,4 +384,31 @@ body::before {
   font-size: 16px;
   font-weight: 800;
 }
+
+/* Mobile Screen Responsiveness */
+@media (max-width: 640px) {
+  .neu-container-card {
+    padding: 4px;
+    gap: 4px;
+  }
+  .neu-item-btn, .neu-stat-box {
+    flex: 1 1 100px;
+    min-height: 36px;
+    padding: 6px 8px;
+    font-size: 10px;
+    border-radius: 8px;
+    gap: 4px;
+  }
+  .neu-item-btn svg, .neu-stat-box svg {
+    width: 12px;
+    height: 12px;
+  }
+  .neu-stat-label {
+    font-size: 8px;
+  }
+  .neu-stat-value {
+    font-size: 12px;
+  }
+}
+
 
