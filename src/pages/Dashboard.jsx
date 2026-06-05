@@ -290,18 +290,21 @@ function SubjectWallet({ subject, navigate, membersMap, deptKey, index: walletIn
         <div 
           className="pocket-content-overlay flex flex-col items-center justify-center relative"
           style={{
-            top: isMobile ? '25px' : '48px',
+            position: 'absolute',
+            top: '0',
+            left: '0',
+            height: '100%',
+            width: '100%',
             padding: isMobile ? '0 8px' : '0 20px',
-            gap: isMobile ? '1px' : '2px',
-            minHeight: isMobile ? '50px' : '75px'
+            gap: isMobile ? '1px' : '2px'
           }}
         >
           <p 
             className="pocket-title font-bold text-white text-center"
             style={{
               fontSize: isMobile
-                ? (subject.name.length > 25 ? '10px' : '11px')
-                : (subject.name.length > 25 ? '12px' : '14px'),
+                ? (subject.name.length > 25 ? '8px' : '9px')
+                : (subject.name.length > 25 ? '10px' : '11px'),
               lineHeight: '1.25',
               fontFamily: 'Outfit, sans-serif',
               display: '-webkit-box',
@@ -317,7 +320,7 @@ function SubjectWallet({ subject, navigate, membersMap, deptKey, index: walletIn
           >
             {subject.name}
           </p>
-          <span className="pocket-subtitle font-semibold">
+          <span className="pocket-subtitle font-semibold text-[8px] sm:text-[10px]">
             {groups.length} Group{groups.length !== 1 ? 's' : ''}
           </span>
           <button
