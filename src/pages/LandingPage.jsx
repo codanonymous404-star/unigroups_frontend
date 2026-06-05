@@ -434,4 +434,11 @@ export default function LandingPage({ onEnter }) {
         * { box-sizing:border-box; margin:0; padding:0; }
         @media (max-width:768px) {
           .hero-grid { grid-template-columns:1fr !important; }
-u said 
+          .features-grid { grid-template-columns:1fr !important; }
+          .stats-grid { grid-template-columns:repeat(2,1fr) !important; }
+          .dept-grid { grid-template-columns:1fr !important; }
+        }
+      `}</style>
+    </div>
+  )
+}

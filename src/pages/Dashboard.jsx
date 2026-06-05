@@ -237,7 +237,7 @@ function SubjectWallet({ subject, navigate, membersMap, deptKey, index: walletIn
           >
             <div className="card-inner">
               <div className="card-top">
-                <span className="font-bold tracking-wider text-xs truncate max-w-[140px]">{g.name}</span>
+                <span className="font-bold tracking-wider text-xs truncate max-w-[70%]">{g.name}</span>
                 <div className="chip flex items-center justify-center">
                   <Icon name={g.status === 'open' ? 'unlock' : 'lock'} size={11} className="text-white/90" />
                 </div>
