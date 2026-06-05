@@ -49,6 +49,7 @@ function SubjectWallet({ subject, navigate, membersMap, deptKey, index: walletIn
   const groups = subject.groups || []
   const [hovered, setHovered] = useState(false)
   const [hoveredCardIndex, setHoveredCardIndex] = useState(null)
+  const isMobile = typeof window !== 'undefined' && window.innerWidth < 640;
 
   const walletId = subject.id || `wallet-${walletIndex}-${deptKey}`;
   const isOpen = activeWalletId === walletId;
@@ -286,7 +287,15 @@ function SubjectWallet({ subject, navigate, membersMap, deptKey, index: walletIn
             strokeDasharray="6 4"
           />
         </svg>
-        <div className="pocket-content-overlay flex flex-col items-center justify-center gap-1">
+        <div 
+          className="pocket-content-overlay flex flex-col items-center justify-center"
+          style={{
+            top: isMobile ? '45px' : '75px',
+            height: isMobile ? '50px' : '75px',
+            padding: isMobile ? '0 8px' : '0 20px',
+            gap: isMobile ? '1px' : '2px'
+          }}
+        >
           <p 
             className="pocket-title font-bold text-white text-center px-2"
             style={{
