@@ -290,8 +290,8 @@ function SubjectWallet({ subject, navigate, membersMap, deptKey, index: walletIn
           <p 
             className="pocket-title font-bold text-white text-center px-2"
             style={{
-              fontSize: subject.name.length > 25 ? '9px' : subject.name.length > 15 ? '11px' : '13px',
-              lineHeight: '1.25',
+              fontSize: subject.name.length > 25 ? '8px' : subject.name.length > 15 ? '10px' : '11px',
+              lineHeight: '1.2',
               fontFamily: 'Outfit, sans-serif',
               display: '-webkit-box',
               WebkitLineClamp: 2,
@@ -314,15 +314,15 @@ function SubjectWallet({ subject, navigate, membersMap, deptKey, index: walletIn
             style={{ pointerEvents: 'auto' }}
             title={isOpen ? "Collapse groups" : "Expand groups"}
           >
-            <Icon 
-              name="chevronUp" 
-              size={13} 
-              className="text-white transition-transform duration-300"
+            <span
+              className="flex items-center justify-center transition-transform duration-300"
               style={{
                 transform: isOpen ? 'rotate(180deg)' : 'rotate(0deg)',
                 transition: 'transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1)'
               }}
-            />
+            >
+              <Icon name="chevronUp" size={13} className="text-white" />
+            </span>
           </button>
         </div>
       </div>
