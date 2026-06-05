@@ -412,48 +412,48 @@ body::before {
 
   /* Wallet mobile scaling */
   .subject-wallet {
-    width: 240px;
-    height: 200px;
+    width: 220px;
+    height: 185px;
     margin-bottom: 10px;
   }
   .wallet-back-panel {
-    width: 240px;
-    height: 160px;
+    width: 220px;
+    height: 145px;
   }
   .wallet-group-card {
-    width: 220px;
-    height: 115px;
+    width: 200px;
+    height: 105px;
     left: 10px;
-    padding: 10px;
+    padding: 8px 10px;
   }
   .wallet-pocket {
-    width: 240px;
-    height: 130px;
+    width: 220px;
+    height: 120px;
   }
   .wallet-pocket-bg {
-    width: 240px;
-    height: 130px;
+    width: 220px;
+    height: 120px;
   }
   .pocket-content-overlay {
-    top: 25px;
-    padding: 0 10px;
+    top: 20px;
+    padding: 0 8px;
     gap: 4px;
   }
   .pocket-title {
-    font-size: 12px;
+    font-size: 11px;
   }
   .pocket-subtitle {
-    font-size: 9px;
+    font-size: 8px;
   }
   .pocket-eye-icon {
-    height: 16px;
-    width: 16px;
-    margin-top: 2px;
+    height: 14px;
+    width: 14px;
+    margin-top: 1px;
   }
   
   /* Adjusted mobile animation translations to prevent clipping */
   .subject-wallet:hover .wallet-group-card {
-    transform: translateY(-50px) scale(0.98) !important;
+    transform: translateY(-40px) scale(0.98) !important;
   }
 }
 
