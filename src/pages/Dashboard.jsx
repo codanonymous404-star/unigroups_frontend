@@ -208,17 +208,30 @@ function SubjectWallet({ subject, navigate, membersMap, deptKey, index: walletIn
           tx = factor * maxX;
         }
         
+        // Expand individual card higher on mouse focus / tap highlight
+        let scale = 1;
+        if (hoveredCardIndex === index) {
+          scale = 1.05;
+          ty -= 18;
+        }
+        
         return (
           <div
             key={g.id}
+            onMouseEnter={() => setHoveredCardIndex(index)}
+            onMouseLeave={() => setHoveredCardIndex(null)}
+            onTouchStart={(e) => {
+              e.stopPropagation();
+              setHoveredCardIndex(index);
+            }}
             className="wallet-group-card"
             style={{ 
               zIndex,
               background: getCardGradient(index),
               bottom: initialBottom,
               transform: isFanned
-                ? `translateY(${ty}px) translateX(${tx}px) rotate(${rot}deg)`
-                : 'translateY(0) translateX(0) rotate(0)',
+                ? `translateY(${ty}px) translateX(${tx}px) rotate(${rot}deg) scale(${scale})`
+                : 'translateY(0) translateX(0) rotate(0) scale(1)',
               transition: 'transform 0.45s cubic-bezier(0.25, 0.8, 0.25, 1), z-index 0.1s ease',
             }}
           >
