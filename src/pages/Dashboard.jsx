@@ -15,69 +15,26 @@ const DEPT = {
   CS: { label: 'Computer Science',     bar: 'bg-cyan-400',   badge: 'cs', color: 'text-cyan-500 dark:text-cyan-400',     glow: 'rgba(6,182,212,0.06)'  },
 }
 
-function StatBox({ label, value, icon, gradient }) {
-  const x = useMotionValue(0)
-  const y = useMotionValue(0)
-
-  const rotateX = useTransform(y, [-60, 60], [8, -8])
-  const rotateY = useTransform(x, [-100, 100], [-8, 8])
-
-  function handleMouseMove(event) {
-    const rect = event.currentTarget.getBoundingClientRect()
-    const mouseX = event.clientX - rect.left - rect.width / 2
-    const mouseY = event.clientY - rect.top - rect.height / 2
-    x.set(mouseX)
-    y.set(mouseY)
-  }
-
-  function handleMouseLeave() {
-    x.set(0)
-    y.set(0)
-  }
-
+function StatBox({ label, value, icon, colorClass }) {
   return (
-    <div style={{ perspective: 800 }}>
-      <motion.div
-        variants={fadeUp}
-        onMouseMove={handleMouseMove}
-        onMouseLeave={handleMouseLeave}
-        whileHover={{
-          y: -4,
-          scale: 1.02,
-          boxShadow: '0 15px 30px rgba(0, 0, 0, 0.2)'
-        }}
-        style={{
-          background: gradient,
-          rotateX,
-          rotateY,
-          transformStyle: 'preserve-3d',
-          boxShadow: 'inset 4px 4px 8px rgba(0, 0, 0, 0.3), inset -4px -4px 8px rgba(255, 255, 255, 0.15)',
-          willChange: 'transform'
-        }}
-        className="rounded-2xl p-4 flex flex-col justify-between h-24 text-white relative overflow-hidden select-none transition-all duration-200"
-      >
-        {/* Shine glare */}
-        <motion.div
-          className="absolute inset-0 pointer-events-none transition-opacity duration-300 opacity-0 hover:opacity-100"
-          style={{
-            background: `radial-gradient(circle 80px at ${useTransform(x, val => val + 100)}px ${useTransform(y, val => val + 50)}px, rgba(255,255,255,0.15), transparent)`
-          }}
-        />
-
-        {/* 3D content layering */}
-        <div style={{ transform: 'translateZ(20px)', transformStyle: 'preserve-3d' }} className="flex flex-col justify-between h-full w-full">
-          <div className="text-white/80" style={{ transform: 'translateZ(15px)' }}>
-            <Icon name={icon} size={18} />
-          </div>
-          <div style={{ transform: 'translateZ(10px)' }}>
-            <p className="text-2xl font-extrabold leading-none">{value}</p>
-            <p className="text-[10px] font-bold text-white/90 mt-1 truncate">{label}</p>
-          </div>
+    <motion.div
+      variants={fadeUp}
+      whileHover={{ y: -4 }}
+      className={`neu-box neu-box-interactive ${colorClass} h-28`}
+    >
+      <div className="flex justify-between items-start w-full">
+        <span className="text-[var(--neu-text-muted)] font-bold text-xs uppercase tracking-wider">{label}</span>
+        <div className="p-2 rounded-xl bg-black/5 dark:bg-white/5">
+          <Icon name={icon} size={20} />
         </div>
-      </motion.div>
-    </div>
+      </div>
+      <div className="mt-2">
+        <h3 className="text-3xl font-extrabold tracking-tight">{value}</h3>
+      </div>
+    </motion.div>
   )
 }
+
 
 // ── Interactive Subject Wallet Card ───────────────────────────────────────────
 function SubjectWallet({ subject, navigate, membersMap, deptKey, index: walletIndex }) {
@@ -428,91 +385,25 @@ function DeptSection({ dept, data, navigate, membersMap }) {
   )
 }
 
-// ── QuickActionCard (3D Cursor-tracking card) ───────────────────────────────────
-function QuickActionCard({ a, idx, navigate }) {
-  const x = useMotionValue(0)
-  const y = useMotionValue(0)
-
-  // Map mouse positions to degrees of rotation.
-  const rotateX = useTransform(y, [-80, 80], [10, -10])
-  const rotateY = useTransform(x, [-150, 150], [-10, 10])
-
-  function handleMouseMove(event) {
-    const rect = event.currentTarget.getBoundingClientRect()
-    // Calculate relative mouse position from the center of the card
-    const mouseX = event.clientX - rect.left - rect.width / 2
-    const mouseY = event.clientY - rect.top - rect.height / 2
-    x.set(mouseX)
-    y.set(mouseY)
-  }
-
-  function handleMouseLeave() {
-    x.set(0)
-    y.set(0)
-  }
-
+// ── QuickActionCard (Neumorphic Card) ───────────────────────────────────
+function QuickActionCard({ a, navigate }) {
   return (
-    <div style={{ perspective: 1000 }} className={idx === 2 ? 'col-span-2 md:col-span-1' : ''}>
-      <motion.button
-        onClick={() => navigate(a.page)}
-        onMouseMove={handleMouseMove}
-        onMouseLeave={handleMouseLeave}
-        whileHover={{
-          y: -6,
-          scale: 1.02,
-          boxShadow: '0 20px 40px rgba(0, 0, 0, 0.25)'
-        }}
-        whileTap={{
-          scale: 0.97,
-          boxShadow: 'inset 6px 6px 12px rgba(0, 0, 0, 0.5), inset -6px -6px 12px rgba(255, 255, 255, 0.2)'
-        }}
-        style={{
-          background: a.gradient,
-          rotateX,
-          rotateY,
-          transformStyle: 'preserve-3d',
-          width: '100%',
-          willChange: 'transform',
-          boxShadow: 'inset 4px 4px 8px rgba(0, 0, 0, 0.35), inset -4px -4px 8px rgba(255, 255, 255, 0.18)'
-        }}
-        className="flex items-center gap-4 p-5 rounded-2xl border-0 text-left relative overflow-hidden text-white cursor-pointer transition-all duration-200"
-      >
-        {/* Shine/Glare reflection overlay */}
-        <motion.div
-          className="absolute inset-0 pointer-events-none transition-opacity duration-300 opacity-0 hover:opacity-100"
-          style={{
-            background: `radial-gradient(circle 120px at ${useTransform(x, val => val + 150)}px ${useTransform(y, val => val + 50)}px, rgba(255,255,255,0.18), transparent)`
-          }}
-        />
-
-        {/* Outer shine ring on border */}
-        <div className="absolute inset-0 rounded-2xl border border-white/10 pointer-events-none" />
-
-        {/* 3D Content Layers */}
-        <div style={{ transform: 'translateZ(40px)', transformStyle: 'preserve-3d' }} className="w-full flex items-center justify-between gap-4">
-          <div className="flex items-center gap-4 flex-1 min-w-0">
-            {/* Icon nested deeper in 3D */}
-            <div
-              style={{ transform: 'translateZ(30px)' }}
-              className="w-12 h-12 rounded-xl bg-white/20 flex items-center justify-center text-white shrink-0 border border-white/20 shadow-inner"
-            >
-              <Icon name={a.icon} size={20} />
-            </div>
-            
-            {/* Text details */}
-            <div style={{ transform: 'translateZ(20px)' }} className="flex-1 min-w-0">
-              <p className="font-extrabold text-sm tracking-wide">{a.label}</p>
-              <p className="text-xs text-white/85 mt-0.5 truncate">{a.desc}</p>
-            </div>
-          </div>
-          
-          {/* Arrow icon */}
-          <div style={{ transform: 'translateZ(25px)' }}>
-            <Icon name="arrowRight" size={16} className="text-white/80 shrink-0" />
-          </div>
-        </div>
-      </motion.button>
-    </div>
+    <motion.button
+      onClick={() => navigate(a.page)}
+      whileHover={{ y: -4 }}
+      className={`neu-box neu-box-interactive ${a.colorClass} flex flex-row items-center gap-4 justify-start h-20 w-full`}
+    >
+      <div className="p-3 rounded-xl bg-black/5 dark:bg-white/5 flex items-center justify-center shrink-0">
+        <Icon name={a.icon} size={22} />
+      </div>
+      <div className="text-left min-w-0 flex-1">
+        <p className="font-extrabold text-sm uppercase tracking-wider">{a.label}</p>
+        <p className="text-[10px] text-[var(--neu-text-muted)] font-bold mt-0.5 truncate">{a.desc}</p>
+      </div>
+      <div className="text-[var(--neu-text-muted)] shrink-0 pr-1">
+        <Icon name="arrowRight" size={16} />
+      </div>
+    </motion.button>
   )
 }
 
@@ -595,22 +486,23 @@ export default function Dashboard() {
         <motion.div variants={staggerContainer} initial="initial" animate="animate" className="space-y-10">
           {/* Stats */}
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-            <StatBox label="Total Groups" value={all.length}        icon="layers" gradient="linear-gradient(135deg, #3b82f6, #1d4ed8)" />
-            <StatBox label="My Groups"    value={mine.length}       icon="users"  gradient="linear-gradient(135deg, #10b981, #059669)" />
-            <StatBox label="Open Groups"  value={open}              icon="unlock" gradient="linear-gradient(135deg, #f59e0b, #d97706)" />
-            <StatBox label="Locked"       value={all.length - open} icon="lock"   gradient="linear-gradient(135deg, #ef4444, #dc2626)" />
+            <StatBox label="Total Groups" value={all.length}        icon="layers" colorClass="neu-blue" />
+            <StatBox label="My Groups"    value={mine.length}       icon="users"  colorClass="neu-emerald" />
+            <StatBox label="Open Groups"  value={open}              icon="unlock" colorClass="neu-amber" />
+            <StatBox label="Locked"       value={all.length - open} icon="lock"   colorClass="neu-red" />
           </div>
 
           {/* Quick actions */}
           <motion.div variants={fadeUp}>
             <p className="text-xs font-semibold text-[var(--text-muted)] uppercase tracking-widest mb-3">Quick Actions</p>
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
               {[
-                { icon: 'plus',   label: 'Create Group',  desc: 'Start a new team',       page: 'create-group',    gradient: 'linear-gradient(135deg, #f97316, #ea580c)' },
-                { icon: 'search', label: 'Browse Groups', desc: 'Find groups to join',     page: 'browse-groups',   gradient: 'linear-gradient(135deg, #06b6d4, #0891b2)' },
-                { icon: 'users',  label: 'My Groups',     desc: 'View your memberships',   page: 'my-groups',       gradient: 'linear-gradient(135deg, #6366f1, #4f46e5)' },
-              ].map((a, idx) => (
-                <QuickActionCard key={a.page} a={a} idx={idx} navigate={navigate} />
+                { icon: 'plus',     label: 'Create Group',  desc: 'Start a new team',       page: 'create-group',     colorClass: 'neu-orange' },
+                { icon: 'search',   label: 'Browse Groups', desc: 'Find groups to join',     page: 'browse-groups',    colorClass: 'neu-cyan' },
+                { icon: 'users',    label: 'My Groups',     desc: 'View memberships',       page: 'my-groups',        colorClass: 'neu-indigo' },
+                { icon: 'settings', label: 'Settings',      desc: 'Account configurations', page: 'account-settings', colorClass: 'neu-pink' },
+              ].map((a) => (
+                <QuickActionCard key={a.page} a={a} navigate={navigate} />
               ))}
             </div>
           </motion.div>
