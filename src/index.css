@@ -228,99 +228,155 @@ body::before {
 
 /* ── NEUMORPHIC DESIGN (Uiverse.io inspired) ── */
 :root {
-  --neu-bg: #e4e4e4;
-  --neu-shadow-out: 9px 9px 18px #c8c8c8, -9px -9px 18px #ffffff;
-  --neu-shadow-in: inset 5px 5px 5px #c8c8c8, inset -5px -5px 5px #ffffff;
-  --neu-text: #333333;
-  --neu-text-muted: #666666;
+  --neu-card-bg: #e4e4e4;
+  --neu-card-shadow: 10px 10px 20px #c4c4c4, -10px -10px 20px #ffffff;
+  --neu-btn-bg: #e4e4e4;
+  --neu-btn-shadow-in: inset 5px 5px 5px #c4c4c4, inset -5px -5px 5px #ffffff;
 }
 
 .dark {
-  --neu-bg: #141418;
-  --neu-shadow-out: 9px 9px 18px #0a0a0c, -9px -9px 18px #1e1e24;
-  --neu-shadow-in: inset 5px 5px 5px #0a0a0c, inset -5px -5px 5px #1e1e24;
-  --neu-text: #eef0f8;
-  --neu-text-muted: #8892aa;
+  --neu-card-bg: #141418;
+  --neu-card-shadow: 10px 10px 20px #0a0a0c, -10px -10px 20px #1e1e24;
+  --neu-btn-bg: #141418;
+  --neu-btn-shadow-in: inset 5px 5px 5px #0a0a0c, inset -5px -5px 5px #1e1e24;
 }
 
-.neu-card-container {
-  background-color: var(--neu-bg);
-  border-radius: 20px;
-  box-shadow: var(--neu-shadow-out);
-  padding: 6px;
-  transition: all 0.3s ease;
-}
-
-.neu-box {
-  background-color: var(--neu-bg) !important;
-  border: none !important;
-  border-radius: 16px !important;
-  box-shadow: var(--neu-shadow-in) !important;
-  color: var(--neu-text) !important;
-  padding: 20px !important;
-  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1) !important;
-  text-align: left;
-  position: relative;
-  overflow: hidden;
+.neu-container-card {
+  background-color: var(--neu-card-bg);
+  border-radius: 15px;
+  box-shadow: var(--neu-card-shadow);
   display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  height: 100%;
+  flex-direction: row;
+  justify-content: space-around;
+  align-items: center;
+  padding: 6px;
   width: 100%;
+  gap: 8px;
+  flex-wrap: wrap;
 }
 
-/* Interactive hover shadow pop-out */
-.neu-box-interactive {
+.neu-item-btn {
+  background-color: var(--neu-btn-bg);
+  border: none;
+  border-radius: 10px;
+  box-shadow: var(--neu-btn-shadow-in);
+  color: var(--text-primary);
   cursor: pointer;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: bold;
+  padding: 10px 16px;
+  text-transform: uppercase;
+  transition: all 0.2s ease;
+  flex: 1 1 150px;
+  min-height: 44px;
+  gap: 6px;
 }
 
-.neu-box-interactive:hover {
-  box-shadow: var(--neu-shadow-out) !important;
-  transform: translateY(-4px);
+.neu-item-btn:hover {
+  box-shadow: none;
 }
 
-.neu-box-interactive:active {
-  box-shadow: var(--neu-shadow-in) !important;
-  transform: translateY(0);
+/* Specific button interactions */
+.neu-explore {
+  color: #3035cb !important;
+}
+.neu-explore svg {
+  fill: #3035cb !important;
+}
+.neu-explore:hover {
+  background-color: #3035cb !important;
+  color: #e4e4e4 !important;
+}
+.neu-explore:hover svg {
+  fill: #e4e4e4 !important;
 }
 
-/* Dynamic color mappings matching Uiverse concept */
-.neu-blue { color: #3b82f6 !important; }
-.neu-blue svg { fill: #3b82f6 !important; stroke: #3b82f6; }
-.neu-blue:hover { background-color: #3b82f6 !important; color: #ffffff !important; }
-.neu-blue:hover svg { fill: #ffffff !important; stroke: #ffffff !important; }
+.neu-post {
+  color: #333333 !important;
+}
+.dark .neu-post {
+  color: #eef0f8 !important;
+}
+.neu-post svg {
+  fill: #333333 !important;
+}
+.dark .neu-post svg {
+  fill: #eef0f8 !important;
+}
+.neu-post:hover {
+  background-color: #333333 !important;
+  color: #e4e4e4 !important;
+}
+.dark .neu-post:hover {
+  background-color: #eef0f8 !important;
+  color: #141418 !important;
+}
+.neu-post:hover svg {
+  fill: #e4e4e4 !important;
+}
+.dark .neu-post:hover svg {
+  fill: #141418 !important;
+}
 
-.neu-emerald { color: #10b981 !important; }
-.neu-emerald svg { fill: #10b981 !important; stroke: #10b981; }
-.neu-emerald:hover { background-color: #10b981 !important; color: #ffffff !important; }
-.neu-emerald:hover svg { fill: #ffffff !important; stroke: #ffffff !important; }
+.neu-chat {
+  color: #b82323 !important;
+}
+.neu-chat svg {
+  fill: #b82323 !important;
+}
+.neu-chat:hover {
+  background-color: #b82323 !important;
+  color: #e4e4e4 !important;
+}
+.neu-chat:hover svg {
+  fill: #e4e4e4 !important;
+}
 
-.neu-amber { color: #f59e0b !important; }
-.neu-amber svg { fill: #f59e0b !important; stroke: #f59e0b; }
-.neu-amber:hover { background-color: #f59e0b !important; color: #ffffff !important; }
-.neu-amber:hover svg { fill: #ffffff !important; stroke: #ffffff !important; }
+.neu-settings {
+  color: #db2777 !important;
+}
+.neu-settings svg {
+  fill: #db2777 !important;
+}
+.neu-settings:hover {
+  background-color: #db2777 !important;
+  color: #e4e4e4 !important;
+}
+.neu-settings:hover svg {
+  fill: #e4e4e4 !important;
+}
 
-.neu-red { color: #ef4444 !important; }
-.neu-red svg { fill: #ef4444 !important; stroke: #ef4444; }
-.neu-red:hover { background-color: #ef4444 !important; color: #ffffff !important; }
-.neu-red:hover svg { fill: #ffffff !important; stroke: #ffffff !important; }
+/* Stat Box specific styling */
+.neu-stat-box {
+  background-color: var(--neu-btn-bg);
+  border: none;
+  border-radius: 10px;
+  box-shadow: var(--neu-btn-shadow-in);
+  color: var(--text-primary);
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 16px;
+  flex: 1 1 150px;
+  min-height: 44px;
+  gap: 8px;
+}
 
-.neu-orange { color: #f97316 !important; }
-.neu-orange svg { fill: #f97316 !important; stroke: #f97316; }
-.neu-orange:hover { background-color: #f97316 !important; color: #ffffff !important; }
-.neu-orange:hover svg { fill: #ffffff !important; stroke: #ffffff !important; }
+.neu-stat-label {
+  font-size: 11px;
+  font-weight: bold;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+}
 
-.neu-cyan { color: #06b6d4 !important; }
-.neu-cyan svg { fill: #06b6d4 !important; stroke: #06b6d4; }
-.neu-cyan:hover { background-color: #06b6d4 !important; color: #ffffff !important; }
-.neu-cyan:hover svg { fill: #ffffff !important; stroke: #ffffff !important; }
+.neu-stat-value {
+  font-size: 16px;
+  font-weight: 800;
+}
 
-.neu-indigo { color: #6366f1 !important; }
-.neu-indigo svg { fill: #6366f1 !important; stroke: #6366f1; }
-.neu-indigo:hover { background-color: #6366f1 !important; color: #ffffff !important; }
-.neu-indigo:hover svg { fill: #ffffff !important; stroke: #ffffff !important; }
-
-.neu-pink { color: #ec4899 !important; }
-.neu-pink svg { fill: #ec4899 !important; stroke: #ec4899; }
-.neu-pink:hover { background-color: #ec4899 !important; color: #ffffff !important; }
-.neu-pink:hover svg { fill: #ffffff !important; stroke: #ffffff !important; }

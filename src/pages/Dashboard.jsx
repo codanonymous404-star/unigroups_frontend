@@ -15,25 +15,33 @@ const DEPT = {
   CS: { label: 'Computer Science',     bar: 'bg-cyan-400',   badge: 'cs', color: 'text-cyan-500 dark:text-cyan-400',     glow: 'rgba(6,182,212,0.06)'  },
 }
 
-function StatBox({ label, value, icon, colorClass }) {
+function StatBox({ label, value, icon }) {
   return (
-    <motion.div
-      variants={fadeUp}
-      whileHover={{ y: -4 }}
-      className={`neu-box neu-box-interactive ${colorClass} h-28`}
-    >
-      <div className="flex justify-between items-start w-full">
-        <span className="text-[var(--neu-text-muted)] font-bold text-xs uppercase tracking-wider">{label}</span>
-        <div className="p-2 rounded-xl bg-black/5 dark:bg-white/5">
-          <Icon name={icon} size={20} />
-        </div>
+    <div className="neu-stat-box">
+      <div className="flex flex-col">
+        <span className="neu-stat-label">{label}</span>
+        <span className="neu-stat-value">{value}</span>
       </div>
-      <div className="mt-2">
-        <h3 className="text-3xl font-extrabold tracking-tight">{value}</h3>
+      <div className="text-[var(--text-muted)] opacity-80">
+        <Icon name={icon} size={16} />
       </div>
-    </motion.div>
+    </div>
   )
 }
+
+// ── QuickActionCard (Neumorphic Card Button) ───────────────────────────────────
+function QuickActionCard({ a, navigate }) {
+  return (
+    <button
+      onClick={() => navigate(a.page)}
+      className={`neu-item-btn ${a.colorClass}`}
+    >
+      <Icon name={a.icon} size={15} />
+      <span>{a.label}</span>
+    </button>
+  )
+}
+
 
 
 // ── Interactive Subject Wallet Card ───────────────────────────────────────────
@@ -385,28 +393,6 @@ function DeptSection({ dept, data, navigate, membersMap }) {
   )
 }
 
-// ── QuickActionCard (Neumorphic Card) ───────────────────────────────────
-function QuickActionCard({ a, navigate }) {
-  return (
-    <motion.button
-      onClick={() => navigate(a.page)}
-      whileHover={{ y: -4 }}
-      className={`neu-box neu-box-interactive ${a.colorClass} flex flex-row items-center gap-4 justify-start h-20 w-full`}
-    >
-      <div className="p-3 rounded-xl bg-black/5 dark:bg-white/5 flex items-center justify-center shrink-0">
-        <Icon name={a.icon} size={22} />
-      </div>
-      <div className="text-left min-w-0 flex-1">
-        <p className="font-extrabold text-sm uppercase tracking-wider">{a.label}</p>
-        <p className="text-[10px] text-[var(--neu-text-muted)] font-bold mt-0.5 truncate">{a.desc}</p>
-      </div>
-      <div className="text-[var(--neu-text-muted)] shrink-0 pr-1">
-        <Icon name="arrowRight" size={16} />
-      </div>
-    </motion.button>
-  )
-}
-
 // ── Main Dashboard ────────────────────────────────────────────────────────────
 export default function Dashboard() {
   const { user }             = useAuth()
@@ -485,22 +471,22 @@ export default function Dashboard() {
         /* Loaded Content with Staggered Entrance Animation */
         <motion.div variants={staggerContainer} initial="initial" animate="animate" className="space-y-10">
           {/* Stats */}
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-            <StatBox label="Total Groups" value={all.length}        icon="layers" colorClass="neu-blue" />
-            <StatBox label="My Groups"    value={mine.length}       icon="users"  colorClass="neu-emerald" />
-            <StatBox label="Open Groups"  value={open}              icon="unlock" colorClass="neu-amber" />
-            <StatBox label="Locked"       value={all.length - open} icon="lock"   colorClass="neu-red" />
+          <div className="neu-container-card">
+            <StatBox label="Total Groups" value={all.length}        icon="layers" />
+            <StatBox label="My Groups"    value={mine.length}       icon="users"  />
+            <StatBox label="Open Groups"  value={open}              icon="unlock" />
+            <StatBox label="Locked"       value={all.length - open} icon="lock"   />
           </div>
 
           {/* Quick actions */}
           <motion.div variants={fadeUp}>
             <p className="text-xs font-semibold text-[var(--text-muted)] uppercase tracking-widest mb-3">Quick Actions</p>
-            <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+            <div className="neu-container-card">
               {[
-                { icon: 'plus',     label: 'Create Group',  desc: 'Start a new team',       page: 'create-group',     colorClass: 'neu-orange' },
-                { icon: 'search',   label: 'Browse Groups', desc: 'Find groups to join',     page: 'browse-groups',    colorClass: 'neu-cyan' },
-                { icon: 'users',    label: 'My Groups',     desc: 'View memberships',       page: 'my-groups',        colorClass: 'neu-indigo' },
-                { icon: 'settings', label: 'Settings',      desc: 'Account configurations', page: 'account-settings', colorClass: 'neu-pink' },
+                { icon: 'plus',     label: 'Create',   page: 'create-group',     colorClass: 'neu-orange' },
+                { icon: 'search',   label: 'Browse',   page: 'browse-groups',    colorClass: 'neu-cyan' },
+                { icon: 'users',    label: 'My Groups', page: 'my-groups',        colorClass: 'neu-indigo' },
+                { icon: 'settings', label: 'Settings',  page: 'account-settings', colorClass: 'neu-pink' },
               ].map((a) => (
                 <QuickActionCard key={a.page} a={a} navigate={navigate} />
               ))}
