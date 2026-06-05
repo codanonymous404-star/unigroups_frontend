@@ -288,15 +288,16 @@ function SubjectWallet({ subject, navigate, membersMap, deptKey, index: walletIn
           />
         </svg>
         <div 
-          className="pocket-content-overlay flex flex-col items-center justify-center"
+          className="pocket-content-overlay flex flex-col items-center justify-center relative"
           style={{
             top: isMobile ? '25px' : '48px',
             padding: isMobile ? '0 8px' : '0 20px',
-            gap: isMobile ? '1px' : '2px'
+            gap: isMobile ? '1px' : '2px',
+            minHeight: isMobile ? '50px' : '75px'
           }}
         >
           <p 
-            className="pocket-title font-bold text-white text-center px-2"
+            className="pocket-title font-bold text-white text-center"
             style={{
               fontSize: isMobile
                 ? (subject.name.length > 25 ? '10px' : '11px')
@@ -308,7 +309,9 @@ function SubjectWallet({ subject, navigate, membersMap, deptKey, index: walletIn
               WebkitBoxOrient: 'vertical',
               overflow: 'hidden',
               wordBreak: 'break-word',
-              textShadow: '0 2px 4px rgba(0,0,0,0.3)'
+              textShadow: '0 2px 4px rgba(0,0,0,0.3)',
+              paddingLeft: isMobile ? '24px' : '36px',
+              paddingRight: isMobile ? '24px' : '36px'
             }}
             title={subject.name}
           >
@@ -320,8 +323,14 @@ function SubjectWallet({ subject, navigate, membersMap, deptKey, index: walletIn
           <button
             type="button"
             onClick={toggleOpen}
-            className="flex items-center justify-center w-6 h-6 rounded-full bg-white/20 hover:bg-white/35 border-0 text-white cursor-pointer transition-all duration-200 mt-1"
-            style={{ pointerEvents: 'auto' }}
+            className="flex items-center justify-center w-6 h-6 rounded-full bg-white/20 hover:bg-white/35 border-0 text-white cursor-pointer transition-all duration-200"
+            style={{ 
+              pointerEvents: 'auto',
+              position: 'absolute',
+              left: isMobile ? '8px' : '18px',
+              top: '50%',
+              transform: 'translateY(-50%)'
+            }}
             title={isOpen ? "Collapse groups" : "Expand groups"}
           >
             <span
