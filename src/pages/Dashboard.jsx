@@ -274,9 +274,18 @@ function SubjectWallet({ subject, navigate, membersMap, deptKey, index: walletIn
           <span className="pocket-subtitle">
             {groups.length} Group{groups.length !== 1 ? 's' : ''}
           </span>
-          <div className="pocket-eye-icon flex items-center justify-center">
-            <Icon name={isOpen ? "eyeOff" : "eye"} size={16} className="text-white/80 transition-transform group-hover:scale-110" />
-          </div>
+          <button
+            type="button"
+            onClick={(e) => {
+              e.stopPropagation();
+              setIsOpen(!isOpen);
+            }}
+            className="flex items-center justify-center w-6 h-6 rounded-full bg-white/20 hover:bg-white/35 border-0 text-white cursor-pointer transition-all duration-200 mt-1"
+            style={{ pointerEvents: 'auto' }}
+            title={isOpen ? "Collapse groups" : "Expand groups"}
+          >
+            <Icon name={isOpen ? "chevronDown" : "chevronUp"} size={13} className="text-white" />
+          </button>
         </div>
       </div>
     </div>

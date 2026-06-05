@@ -410,50 +410,72 @@ body::before {
     font-size: 12px;
   }
 
-  /* Wallet mobile scaling */
+  /* Wallet mobile scaling - ultra compact to prevent overlapping in 2-column layout */
   .subject-wallet {
-    width: 220px;
-    height: 185px;
-    margin-bottom: 10px;
+    width: 140px;
+    height: 125px;
+    margin-bottom: 5px;
   }
   .wallet-back-panel {
-    width: 220px;
-    height: 145px;
+    width: 140px;
+    height: 105px;
+    border-radius: 12px 12px 20px 20px;
   }
   .wallet-group-card {
-    width: 200px;
-    height: 105px;
-    left: 10px;
-    padding: 8px 10px;
+    width: 130px;
+    height: 72px;
+    left: 5px;
+    padding: 6px;
+    border-radius: 10px;
   }
-  .wallet-pocket {
-    width: 220px;
-    height: 120px;
-  }
-  .wallet-pocket-bg {
-    width: 220px;
-    height: 120px;
-  }
-  .pocket-content-overlay {
-    top: 20px;
-    padding: 0 8px;
-    gap: 4px;
-  }
-  .pocket-title {
-    font-size: 11px;
-  }
-  .pocket-subtitle {
+  
+  .wallet-group-card .card-top span {
     font-size: 8px;
   }
+  .wallet-group-card .card-top .chip svg {
+    width: 8px;
+    height: 8px;
+  }
+  .wallet-group-card .my-1 {
+    display: none !important; /* Hide member avatars on mobile cards to keep it clean */
+  }
+  .wallet-group-card .card-bottom {
+    margin-top: 4px;
+  }
+  .wallet-group-card .card-bottom .label {
+    font-size: 6px;
+  }
+  .wallet-group-card .card-bottom .value {
+    font-size: 7px;
+  }
+  
+  .wallet-pocket {
+    width: 140px;
+    height: 85px;
+  }
+  .wallet-pocket-bg {
+    width: 140px;
+    height: 85px;
+  }
+  .pocket-content-overlay {
+    top: 14px;
+    padding: 0 4px;
+    gap: 2px;
+  }
+  .pocket-title {
+    font-size: 9px;
+    font-weight: 800;
+  }
+  .pocket-subtitle {
+    font-size: 7px;
+  }
   .pocket-eye-icon {
-    height: 14px;
-    width: 14px;
-    margin-top: 1px;
+    display: none !important; /* hide default eye container on mobile */
   }
   
   /* Adjusted mobile animation translations to prevent clipping */
   .subject-wallet:hover .wallet-group-card {
-    transform: translateY(-40px) scale(0.98) !important;
+    transform: translateY(-28px) scale(0.98) !important;
   }
 }
 
