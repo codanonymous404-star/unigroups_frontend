@@ -194,14 +194,14 @@ function SubjectWallet({ subject, navigate, membersMap, deptKey, index: walletIn
         if (total === 1) {
           ty = -90; // single card slides out fully to be visible
         } else {
-          // Map vertical slides: Group 1 (front) goes to -10px, back-most goes to -125px
-          const minY = -125;
+          // Map vertical slides: Group 1 (front) goes to -10px, back-most goes to -135px for more space
+          const minY = -135;
           const maxY = -10;
           ty = minY + (slotIndex / (total - 1)) * (maxY - minY);
           
           // Map rotation and horizontal fanning out
-          const maxAngle = Math.min(10, 30 / (total - 1));
-          const maxX = Math.min(45, 95 / (total - 1));
+          const maxAngle = Math.min(12, 36 / (total - 1));
+          const maxX = Math.min(65, 130 / (total - 1)); // Increased from 45/95 to 65/130 for more click space
           const factor = (slotIndex / (total - 1)) * 2 - 1; // goes from -1 to 1
           
           rot = factor * maxAngle;
@@ -290,7 +290,7 @@ function SubjectWallet({ subject, navigate, membersMap, deptKey, index: walletIn
           <p 
             className="pocket-title font-bold text-white text-center px-2"
             style={{
-              fontSize: subject.name.length > 25 ? '11px' : subject.name.length > 15 ? '13px' : '15px',
+              fontSize: subject.name.length > 25 ? '9px' : subject.name.length > 15 ? '11px' : '13px',
               lineHeight: '1.25',
               fontFamily: 'Outfit, sans-serif',
               display: '-webkit-box',
@@ -314,7 +314,15 @@ function SubjectWallet({ subject, navigate, membersMap, deptKey, index: walletIn
             style={{ pointerEvents: 'auto' }}
             title={isOpen ? "Collapse groups" : "Expand groups"}
           >
-            <Icon name={isOpen ? "chevronDown" : "chevronUp"} size={13} className="text-white" />
+            <Icon 
+              name="chevronUp" 
+              size={13} 
+              className="text-white transition-transform duration-300"
+              style={{
+                transform: isOpen ? 'rotate(180deg)' : 'rotate(0deg)',
+                transition: 'transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1)'
+              }}
+            />
           </button>
         </div>
       </div>
