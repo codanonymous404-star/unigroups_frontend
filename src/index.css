@@ -97,7 +97,7 @@ body::before {
 .subject-wallet {
   position: relative;
   width: 290px;
-  height: 240px;
+  height: 255px;
   cursor: pointer;
   perspective: 1000px;
   display: flex;
@@ -163,7 +163,7 @@ body::before {
   position: absolute;
   bottom: 0;
   width: 290px;
-  height: 160px;
+  height: 175px;
   z-index: 40;
 }
 
@@ -413,7 +413,7 @@ body::before {
   /* Wallet mobile scaling - ultra compact to prevent overlapping in 2-column layout */
   .subject-wallet {
     width: 140px;
-    height: 150px;
+    height: 162px;
     margin-bottom: 5px;
   }
   .wallet-back-panel {
@@ -461,11 +461,11 @@ body::before {
   
   .wallet-pocket {
     width: 140px;
-    height: 100px;
+    height: 112px;
   }
   .wallet-pocket-bg {
     width: 140px;
-    height: 100px;
+    height: 112px;
   }
   .pocket-content-overlay {
     top: 20px;

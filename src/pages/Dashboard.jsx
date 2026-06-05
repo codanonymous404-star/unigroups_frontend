@@ -290,7 +290,7 @@ function SubjectWallet({ subject, navigate, membersMap, deptKey, index: walletIn
         <div 
           className="pocket-content-overlay flex flex-col items-center justify-center"
           style={{
-            top: isMobile ? '22px' : '42px',
+            top: isMobile ? '25px' : '48px',
             padding: isMobile ? '0 8px' : '0 20px',
             gap: isMobile ? '1px' : '2px'
           }}
@@ -299,8 +299,8 @@ function SubjectWallet({ subject, navigate, membersMap, deptKey, index: walletIn
             className="pocket-title font-bold text-white text-center px-2"
             style={{
               fontSize: isMobile
-                ? (subject.name.length > 25 ? '9px' : subject.name.length > 15 ? '10px' : '11px')
-                : (subject.name.length > 25 ? '11px' : subject.name.length > 15 ? '13px' : '14px'),
+                ? (subject.name.length > 25 ? '10px' : '11px')
+                : (subject.name.length > 25 ? '12px' : '14px'),
               lineHeight: '1.25',
               fontFamily: 'Outfit, sans-serif',
               display: '-webkit-box',
