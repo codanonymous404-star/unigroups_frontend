@@ -179,9 +179,12 @@ function SubjectWallet({ subject, navigate, membersMap, deptKey, index: walletIn
         const slotIndex = total - 1 - index;
         const zIndex = hoveredCardIndex === index ? 100 : (10 + slotIndex);
         
-        // 1. Initial stacked layout bottom positioning (Group 1 is lowest at bottom 35px)
-        const step = total > 1 ? Math.min(22, 55 / (total - 1)) : 0;
-        const initialBottom = 35 + index * step;
+        // 1. Initial stacked layout bottom positioning (responsive to prevent overflow when closed)
+        const isMobile = window.innerWidth < 640;
+        const baseBottom = isMobile ? 12 : 35;
+        const maxStep = isMobile ? 10 : 22;
+        const step = total > 1 ? Math.min(maxStep, (isMobile ? 25 : 55) / (total - 1)) : 0;
+        const initialBottom = baseBottom + index * step;
         
         // 2. Staggered dynamic fan values on hover
         let ty = 0;

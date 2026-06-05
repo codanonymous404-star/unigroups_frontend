@@ -446,6 +446,10 @@ body::before {
     margin-bottom: 2px !important;
   }
   .wallet-group-card .card-bottom {
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: flex-end !important;
+    width: 100% !important;
     margin-top: 2px !important;
   }
   .wallet-group-card .card-bottom .label {
