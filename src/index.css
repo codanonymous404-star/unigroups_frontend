@@ -436,9 +436,6 @@ body::before {
     width: 8px;
     height: 8px;
   }
-  .wallet-group-card .my-1 {
-    display: none !important; /* Hide member avatars on mobile cards to keep it clean */
-  }
   .wallet-group-card .card-bottom {
     margin-top: 4px;
   }
@@ -471,11 +468,6 @@ body::before {
   }
   .pocket-eye-icon {
     display: none !important; /* hide default eye container on mobile */
-  }
-  
-  /* Adjusted mobile animation translations to prevent clipping */
-  .subject-wallet:hover .wallet-group-card {
-    transform: translateY(-28px) scale(0.98) !important;
   }
 }
 
