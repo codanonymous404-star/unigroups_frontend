@@ -353,7 +353,7 @@ function DeptSection({ dept, data, navigate, membersMap }) {
   const bySubject = data?.by_subject || []
 
   return (
-    <section>
+    <section className="p-6 rounded-2xl bg-[var(--bg-surface)] border border-[var(--border)] shadow-sm">
       {/* Dept header */}
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-3">
